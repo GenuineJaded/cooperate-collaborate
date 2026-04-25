@@ -101,3 +101,7 @@
 - [x] Forum: move "Draft Artifact" button to top-left (not top-right), rename from "quip" to "Draft Artifact", wrap in purple border box
 - [x] Forum: wrap the three door labels (writing · music · art) in purple border boxes
 - [x] ArtifactCard: wrap the "quip" button inside the card in a purple border box
+
+## Fixes (round 7)
+- [ ] Forum: Draft Artifact button — move further left so it clears the artifact grid entirely, with breathing room
+- [ ] Forum: three door labels (writing · music · art) — center them properly in the available width (accounting for the 176px panel offset)

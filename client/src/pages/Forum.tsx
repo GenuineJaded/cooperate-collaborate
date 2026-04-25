@@ -36,85 +36,83 @@ export default function Forum() {
 
   return (
     <div
-      className="min-h-screen w-full flex"
-      style={{ background: "oklch(0.04 0.01 280)" }}
+      className="min-h-screen w-full"
+      style={{
+        background: fieldColors.active ? fieldColors.bgColor : "oklch(0.04 0.01 280)",
+        color: fieldColors.active ? fieldColors.textColor : undefined,
+        transition: "background 0.6s ease, color 0.6s ease",
+      }}
     >
-      {/* Multi-Color-Displays — left panel */}
+      {/* Multi-Color-Displays — fixed left panel, sits above everything */}
       <MultiColorPanel onColorsChange={(c) => setFieldColors(c)} />
 
-      {/* Main field — viewer-local colors applied when Multi-Color-Displays is active */}
-      <div
-        className="flex-1 flex flex-col min-h-screen"
-        style={{
-          background: fieldColors.active ? fieldColors.bgColor : "oklch(0.04 0.01 280)",
-          color: fieldColors.active ? fieldColors.textColor : undefined,
-          transition: "background 0.6s ease, color 0.6s ease",
-          paddingLeft: "176px", /* clear the fixed MultiColorPanel tab (172px wide + 4px gap) */
-        }}
+      {/* Three doors — full viewport width, truly centered */}
+      <nav
+        className="flex items-center justify-center gap-8 py-8"
+        style={{ borderBottom: "1px solid oklch(0.15 0.04 295 / 0.4)" }}
       >
-        {/* Three doors — parallel, equal weight */}
-        <nav
-          className="flex items-center justify-center gap-8 py-8"
-          style={{ borderBottom: "1px solid oklch(0.15 0.04 295 / 0.4)" }}
-        >
-          {doors.map((d) => (
-            <button
-              key={d}
-              onClick={() => setActiveDoor(d)}
-              className="relative text-sm tracking-widest transition-all duration-400"
-              style={{
-                background: activeDoor === d ? "oklch(0.10 0.03 295 / 0.4)" : "none",
-                border: activeDoor === d
-                  ? "1px solid oklch(0.72 0.22 295 / 0.80)"
-                  : "1px solid oklch(0.55 0.18 295 / 0.45)",
-                color:
-                  activeDoor === d
-                    ? "oklch(0.75 0.18 295)"
-                    : "oklch(0.45 0.10 295)",
-                fontWeight: activeDoor === d ? 400 : 300,
-                letterSpacing: "0.25em",
-                padding: "0.3rem 1rem",
-                borderRadius: "2px",
-                boxShadow: activeDoor === d ? "0 0 12px oklch(0.55 0.18 295 / 0.20)" : "none",
-                transition: "all 0.25s ease",
-              }}
-            >
-              {d}
-            </button>
-          ))}
-        </nav>
+        {doors.map((d) => (
+          <button
+            key={d}
+            onClick={() => setActiveDoor(d)}
+            className="text-sm tracking-widest"
+            style={{
+              background: activeDoor === d ? "oklch(0.10 0.03 295 / 0.4)" : "none",
+              border: activeDoor === d
+                ? "1px solid oklch(0.72 0.22 295 / 0.80)"
+                : "1px solid oklch(0.55 0.18 295 / 0.45)",
+              color:
+                activeDoor === d
+                  ? "oklch(0.75 0.18 295)"
+                  : "oklch(0.45 0.10 295)",
+              fontWeight: activeDoor === d ? 400 : 300,
+              letterSpacing: "0.25em",
+              padding: "0.3rem 1rem",
+              borderRadius: "2px",
+              boxShadow: activeDoor === d ? "0 0 12px oklch(0.55 0.18 295 / 0.20)" : "none",
+              transition: "all 0.25s ease",
+            }}
+          >
+            {d}
+          </button>
+        ))}
+      </nav>
 
-        {/* Field */}
-        <div className="flex-1 relative px-6 py-8">
-          {/* Draft Artifact button — top left, purple box */}
-          <div className="flex justify-start mb-8">
-            <button
-              onClick={() => setShowNewForm(true)}
-              className="text-xs tracking-widest transition-all duration-300"
-              style={{
-                background: "none",
-                border: "1px solid oklch(0.55 0.18 295 / 0.55)",
-                color: "oklch(0.55 0.18 295)",
-                padding: "0.4rem 1.1rem",
-                borderRadius: "2px",
-                letterSpacing: "0.2em",
-                boxShadow: "0 0 8px oklch(0.55 0.18 295 / 0.10)",
-                transition: "all 0.25s ease",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 0 16px oklch(0.55 0.18 295 / 0.28)";
-                (e.currentTarget as HTMLButtonElement).style.borderColor = "oklch(0.72 0.22 295 / 0.80)";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 0 8px oklch(0.55 0.18 295 / 0.10)";
-                (e.currentTarget as HTMLButtonElement).style.borderColor = "oklch(0.55 0.18 295 / 0.55)";
-              }}
-            >
-              Draft Artifact
-            </button>
-          </div>
+      {/* Field — padded left to clear the fixed panel tab */}
+      <div
+        className="flex-1 flex flex-col"
+        style={{ paddingLeft: "196px" /* 172px panel + 24px breathing room */ }}
+      >
+        {/* Draft Artifact — sits in its own row, left-aligned within the field, clear of the panel */}
+        <div className="px-6 pt-8 pb-0">
+          <button
+            onClick={() => setShowNewForm(true)}
+            className="text-xs tracking-widest"
+            style={{
+              background: "none",
+              border: "1px solid oklch(0.55 0.18 295 / 0.55)",
+              color: "oklch(0.55 0.18 295)",
+              padding: "0.4rem 1.1rem",
+              borderRadius: "2px",
+              letterSpacing: "0.2em",
+              boxShadow: "0 0 8px oklch(0.55 0.18 295 / 0.10)",
+              transition: "all 0.25s ease",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 0 16px oklch(0.55 0.18 295 / 0.28)";
+              (e.currentTarget as HTMLButtonElement).style.borderColor = "oklch(0.72 0.22 295 / 0.80)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 0 8px oklch(0.55 0.18 295 / 0.10)";
+              (e.currentTarget as HTMLButtonElement).style.borderColor = "oklch(0.55 0.18 295 / 0.55)";
+            }}
+          >
+            Draft Artifact
+          </button>
+        </div>
 
-          {/* Artifact field — presences, not list items */}
+        {/* Artifact field — presences, not list items */}
+        <div className="px-6 py-8">
           {!artifacts || artifacts.length === 0 ? (
             <div
               className="flex items-center justify-center h-64"

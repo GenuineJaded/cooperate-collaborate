@@ -73,3 +73,13 @@
 - [x] Multi-Color-Displays: make color selection actually apply visibly (wheels must respond to click and show selection)
 - [x] Multi-Color-Displays: add a clear "return to default" button inside the panel
 - [x] Landing page: increase text brightness/contrast so all lines read clearly — warm, not strained
+
+## Fixes (round 3)
+- [x] ArtifactCard: move quip button to bottom-right of card
+- [x] ArtifactCard: move fractal heart to top-right of card (where the unknown dot currently sits)
+- [x] ArtifactCard: remove the stray dot/element at top-right that serves no purpose
+- [x] ArtifactCard + QuipModal + NewArtifactForm: accept all document/file types in upload inputs
+
+## Fixes (round 3 — gaps)
+- [x] ArtifactCard: clicking the artifact body/card area opens the quip window (not just the quip button)
+- [x] ArtifactCard + QuipModal: render non-image file attachments as a file chip (filename + type) rather than a broken img tag

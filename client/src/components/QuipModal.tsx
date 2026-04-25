@@ -213,7 +213,7 @@ export default function QuipModal({ artifact, onClose, onQuipped }: Props) {
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*,image/gif"
+            accept="*/*"
             className="hidden"
             onChange={handleFileSelect}
           />

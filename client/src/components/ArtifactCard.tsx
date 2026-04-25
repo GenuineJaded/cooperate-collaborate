@@ -60,6 +60,21 @@ export default function ArtifactCard({ artifact, sessionId, onQuipped }: Props) 
           transition: "border-color 2s ease, box-shadow 2s ease",
         }}
       >
+        {/* Fractal heart — top-right, unlabeled, discovered */}
+        <button
+          onClick={() => setShowIntimate(true)}
+          className="absolute top-2 right-2 animate-pulse-fractal"
+          style={{
+            background: "none",
+            border: "none",
+            padding: "0.2rem",
+            lineHeight: 1,
+          }}
+          aria-label=""
+        >
+          <FractalHeart shade={shade} />
+        </button>
+
         {/* Nama — top, quiet */}
         {artifact.nama && (
           <p
@@ -70,7 +85,7 @@ export default function ArtifactCard({ artifact, sessionId, onQuipped }: Props) 
           </p>
         )}
 
-        {/* Body */}
+        {/* Body — clicking opens quip */}
         {artifact.body && (
           <p
             className="text-sm leading-relaxed mb-4"
@@ -78,26 +93,23 @@ export default function ArtifactCard({ artifact, sessionId, onQuipped }: Props) 
               color: "oklch(0.78 0.04 295)",
               fontWeight: 300,
               whiteSpace: "pre-wrap",
+              cursor: "pointer",
             }}
+            onClick={() => setShowQuip(true)}
           >
             {artifact.body}
           </p>
         )}
 
-        {/* File — image or gif */}
+        {/* File — image/gif rendered inline; other types as a chip */}
         {artifact.fileUrl && (
           <div className="mb-4">
-            <img
-              src={artifact.fileUrl}
-              alt=""
-              className="max-w-full rounded-sm"
-              style={{ maxHeight: "280px", objectFit: "contain" }}
-            />
+            <FileAttachment url={artifact.fileUrl} />
           </div>
         )}
 
-        {/* Footer: quip + fractal heart */}
-        <div className="flex items-center justify-between mt-2">
+        {/* Footer: quip — bottom-right */}
+        <div className="flex items-center justify-end mt-2">
           <button
             onClick={() => setShowQuip(true)}
             className="text-xs tracking-widest transition-all duration-300"
@@ -111,28 +123,7 @@ export default function ArtifactCard({ artifact, sessionId, onQuipped }: Props) 
           >
             quip
           </button>
-
-          {/* Fractal heart — unlabeled, discovered */}
-          <button
-            onClick={() => setShowIntimate(true)}
-            className="animate-pulse-fractal"
-            style={{
-              background: "none",
-              border: "none",
-              padding: "0.2rem",
-              lineHeight: 1,
-            }}
-            aria-label=""
-          >
-            <FractalHeart shade={shade} />
-          </button>
         </div>
-
-        {/* Shade indicator — a barely visible dot */}
-        <div
-          className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full"
-          style={{ background: borderColor, opacity: 0.5 }}
-        />
       </div>
 
       {showQuip && (
@@ -154,6 +145,48 @@ export default function ArtifactCard({ artifact, sessionId, onQuipped }: Props) 
         />
       )}
     </>
+  );
+}
+
+// FileAttachment — renders images inline, other files as a chip
+function FileAttachment({ url }: { url: string }) {
+  const ext = url.split("?")[0].split(".").pop()?.toLowerCase() ?? "";
+  const imageExts = ["jpg", "jpeg", "png", "gif", "webp", "svg", "avif"];
+  const isImage = imageExts.includes(ext) || url.includes("/manus-storage/");
+
+  if (isImage) {
+    return (
+      <img
+        src={url}
+        alt=""
+        className="max-w-full rounded-sm"
+        style={{ maxHeight: "280px", objectFit: "contain" }}
+      />
+    );
+  }
+
+  const filename = url.split("/").pop()?.split("?")[0] ?? "attachment";
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "0.4rem",
+        border: "1px solid oklch(0.22 0.06 295 / 0.45)",
+        borderRadius: "2px",
+        padding: "0.3rem 0.6rem",
+        color: "oklch(0.55 0.12 295)",
+        fontSize: "0.7rem",
+        letterSpacing: "0.1em",
+        textDecoration: "none",
+      }}
+    >
+      <span style={{ opacity: 0.6 }}>⊕</span>
+      {filename}
+    </a>
   );
 }
 

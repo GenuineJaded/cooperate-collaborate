@@ -195,7 +195,7 @@ export default function NewArtifactForm({ door, onClose, onCreated }: Props) {
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*,image/gif"
+            accept="*/*"
             className="hidden"
             onChange={handleFileSelect}
           />

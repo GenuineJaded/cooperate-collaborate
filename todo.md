@@ -69,7 +69,7 @@
 - [x] Quip modal blinking rectangle: label should say "Quip" not "Artifact" (three windows, three labels: Artifact / Quip / Intimate Collaborate, same mechanism)
 
 ## Fixes (round 2)
-- [ ] Multi-Color-Displays: restore hinge-upward behavior (panel opens upward from bottom-left, not as side overlay)
-- [ ] Multi-Color-Displays: make color selection actually apply visibly (wheels must respond to click and show selection)
-- [ ] Multi-Color-Displays: add a clear "return to default" button inside the panel
-- [ ] Landing page: increase text brightness/contrast so all lines read clearly — warm, not strained
+- [x] Multi-Color-Displays: restore hinge-upward behavior (panel opens upward from bottom-left, not as side overlay)
+- [x] Multi-Color-Displays: make color selection actually apply visibly (wheels must respond to click and show selection)
+- [x] Multi-Color-Displays: add a clear "return to default" button inside the panel
+- [x] Landing page: increase text brightness/contrast so all lines read clearly — warm, not strained

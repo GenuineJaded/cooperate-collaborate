@@ -1,10 +1,12 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { shadeClass, shadeColor, getSessionId } from "@/lib/shades";
 import ArtifactCard from "@/components/ArtifactCard";
 import NewArtifactForm from "@/components/NewArtifactForm";
 import MultiColorPanel from "@/components/MultiColorPanel";
+
+export type FieldFilter = { hue1: number; hue2: number; active: boolean };
 
 type Door = "writing" | "music" | "art";
 
@@ -14,6 +16,7 @@ export default function Forum() {
   const [activeDoor, setActiveDoor] = useState<Door>(door);
   const [showNewForm, setShowNewForm] = useState(false);
   const sessionId = getSessionId();
+  const [fieldFilter, setFieldFilter] = useState<FieldFilter>({ hue1: 295, hue2: 260, active: false });
 
   const { data: artifacts, refetch } = trpc.artifact.list.useQuery({
     type: activeDoor,
@@ -33,10 +36,18 @@ export default function Forum() {
       style={{ background: "oklch(0.04 0.01 280)" }}
     >
       {/* Multi-Color-Displays — left panel */}
-      <MultiColorPanel />
+      <MultiColorPanel onFilterChange={(f) => setFieldFilter(f)} />
 
-      {/* Main field */}
-      <div className="flex-1 flex flex-col min-h-screen">
+      {/* Main field — viewer-local hue filter applied when Multi-Color-Displays is active */}
+      <div
+        className="flex-1 flex flex-col min-h-screen"
+        style={{
+          filter: fieldFilter.active
+            ? `hue-rotate(${fieldFilter.hue1 - 295}deg) saturate(1.1)`
+            : undefined,
+          transition: "filter 0.6s ease",
+        }}
+      >
         {/* Three doors — parallel, equal weight */}
         <nav
           className="flex items-center justify-center gap-12 py-8"

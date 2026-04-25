@@ -9,17 +9,44 @@ interface ColorWheel {
   lightness: number;
 }
 
-export default function MultiColorPanel() {
+interface PanelProps {
+  onFilterChange?: (f: { hue1: number; hue2: number; active: boolean }) => void;
+}
+
+export default function MultiColorPanel({ onFilterChange }: PanelProps) {
   const [open, setOpen] = useState(false);
   const [wheel1, setWheel1] = useState<ColorWheel>(DEFAULT_WHEEL1);
   const [wheel2, setWheel2] = useState<ColorWheel>(DEFAULT_WHEEL2);
+  const [filterActive, setFilterActive] = useState(false);
 
   const toOklch = (w: ColorWheel) =>
     `oklch(${w.lightness.toFixed(2)} ${w.saturation.toFixed(2)} ${w.hue})`;
 
+  const emitFilter = (w1: ColorWheel, w2: ColorWheel, active: boolean) => {
+    onFilterChange?.({ hue1: w1.hue, hue2: w2.hue, active });
+  };
+
+  const handleWheel1Change = (v: ColorWheel) => {
+    setWheel1(v);
+    emitFilter(v, wheel2, filterActive);
+  };
+
+  const handleWheel2Change = (v: ColorWheel) => {
+    setWheel2(v);
+    emitFilter(wheel1, v, filterActive);
+  };
+
+  const toggleFilter = () => {
+    const next = !filterActive;
+    setFilterActive(next);
+    emitFilter(wheel1, wheel2, next);
+  };
+
   const resetToDefault = () => {
     setWheel1({ ...DEFAULT_WHEEL1 });
     setWheel2({ ...DEFAULT_WHEEL2 });
+    setFilterActive(false);
+    emitFilter(DEFAULT_WHEEL1, DEFAULT_WHEEL2, false);
   };
 
   return (
@@ -64,15 +91,34 @@ export default function MultiColorPanel() {
           <ColorWheelControl
             label="A"
             value={wheel1}
-            onChange={setWheel1}
+            onChange={handleWheel1Change}
             color={toOklch(wheel1)}
           />
           <ColorWheelControl
             label="B"
             value={wheel2}
-            onChange={setWheel2}
+            onChange={handleWheel2Change}
             color={toOklch(wheel2)}
           />
+
+          {/* Apply toggle */}
+          <button
+            onClick={toggleFilter}
+            style={{
+              background: filterActive ? "oklch(0.18 0.06 295 / 0.5)" : "none",
+              border: "1px solid oklch(0.28 0.08 295 / 0.5)",
+              color: filterActive ? "oklch(0.70 0.14 295)" : "oklch(0.40 0.08 295)",
+              fontSize: "0.55rem",
+              letterSpacing: "0.18em",
+              padding: "0.3rem 0",
+              borderRadius: "1px",
+              cursor: "pointer",
+              width: "100%",
+              transition: "all 0.25s ease",
+            }}
+          >
+            {filterActive ? "applied" : "apply"}
+          </button>
 
           {/* Preview swatches */}
           <div style={{ display: "flex", gap: "6px" }}>

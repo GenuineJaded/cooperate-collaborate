@@ -113,6 +113,9 @@
 - [x] ArtifactCard: make the card larger (taller min-height, bigger text, more internal padding)
 - [x] NewArtifactForm + QuipModal: add media upload support (images, video, audio) with preview
 
-## Fixes (round 10 — pending)
-- [ ] NewArtifactForm + QuipModal: add user-facing error state for upload/submit failures (not just console.error)
-- [ ] NewArtifactForm + QuipModal: enforce MAX_FILE_BYTES (5MB) with clear feedback for oversized files
+## Fixes (round 10)
+- [x] Forum: add vertical gap between Draft Artifact button and the artifact card grid (they are flush/overlapping)
+- [x] NewArtifactForm: submit button label is still "place" — change to "place" → something intentional, or keep consistent with design intent
+- [x] NewArtifactForm + QuipModal: modal text (body textarea, Nāma field) is too dim to read — increase text brightness
+- [x] NewArtifactForm + QuipModal: add user-facing error state for upload/submit failures (not just console.error)
+- [x] NewArtifactForm + QuipModal: enforce MAX_FILE_BYTES (5MB) with clear feedback for oversized files

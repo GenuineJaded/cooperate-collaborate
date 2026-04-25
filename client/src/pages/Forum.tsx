@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "wouter";
 import { trpc } from "@/lib/trpc";
-import { shadeClass, shadeColor, getSessionId } from "@/lib/shades";
+import { getSessionId } from "@/lib/shades";
 import ArtifactCard from "@/components/ArtifactCard";
 import NewArtifactForm from "@/components/NewArtifactForm";
 import MultiColorPanel, { FieldColors } from "@/components/MultiColorPanel";
@@ -80,69 +80,63 @@ export default function Forum() {
 
       {/* Field — padded left to clear the fixed panel tab */}
       <div
-        className="flex-1 flex flex-col"
         style={{ paddingLeft: "196px" /* 172px panel + 24px breathing room */ }}
       >
-        {/* Field body: Draft Artifact button LEFT, artifact grid RIGHT — side by side */}
-        <div className="flex items-start gap-6 px-6 py-8">
+        {/* Draft Artifact button — sits above the grid with breathing room */}
+        <div className="px-8 pt-8 pb-4">
+          <button
+            onClick={() => setShowNewForm(true)}
+            className="text-xs tracking-widest"
+            style={{
+              background: "none",
+              border: "1px solid oklch(0.55 0.18 295 / 0.55)",
+              color: "oklch(0.55 0.18 295)",
+              padding: "0.45rem 1.2rem",
+              borderRadius: "2px",
+              letterSpacing: "0.2em",
+              boxShadow: "0 0 8px oklch(0.55 0.18 295 / 0.10)",
+              transition: "all 0.25s ease",
+              whiteSpace: "nowrap",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 0 16px oklch(0.55 0.18 295 / 0.28)";
+              (e.currentTarget as HTMLButtonElement).style.borderColor = "oklch(0.72 0.22 295 / 0.80)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 0 8px oklch(0.55 0.18 295 / 0.10)";
+              (e.currentTarget as HTMLButtonElement).style.borderColor = "oklch(0.55 0.18 295 / 0.55)";
+            }}
+          >
+            Draft Artifact
+          </button>
+        </div>
 
-          {/* Left column: Draft Artifact button, pinned to top */}
-          <div className="flex-shrink-0 pt-0">
-            <button
-              onClick={() => setShowNewForm(true)}
-              className="text-xs tracking-widest"
+        {/* Artifact grid — full width below the button */}
+        <div className="px-8 pb-12">
+          {!artifacts || artifacts.length === 0 ? (
+            <div
+              className="flex items-center justify-center h-64"
+              style={{ color: "oklch(0.28 0.06 295)", fontSize: "0.8rem", letterSpacing: "0.15em" }}
+            >
+              nothing is being held here
+            </div>
+          ) : (
+            <div
+              className="grid gap-6"
               style={{
-                background: "none",
-                border: "1px solid oklch(0.55 0.18 295 / 0.55)",
-                color: "oklch(0.55 0.18 295)",
-                padding: "0.4rem 1.1rem",
-                borderRadius: "2px",
-                letterSpacing: "0.2em",
-                boxShadow: "0 0 8px oklch(0.55 0.18 295 / 0.10)",
-                transition: "all 0.25s ease",
-                whiteSpace: "nowrap",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 0 16px oklch(0.55 0.18 295 / 0.28)";
-                (e.currentTarget as HTMLButtonElement).style.borderColor = "oklch(0.72 0.22 295 / 0.80)";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 0 8px oklch(0.55 0.18 295 / 0.10)";
-                (e.currentTarget as HTMLButtonElement).style.borderColor = "oklch(0.55 0.18 295 / 0.55)";
+                gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
               }}
             >
-              Draft Artifact
-            </button>
-          </div>
-
-          {/* Right column: artifact grid fills remaining space */}
-          <div className="flex-1">
-            {!artifacts || artifacts.length === 0 ? (
-              <div
-                className="flex items-center justify-center h-64"
-                style={{ color: "oklch(0.28 0.06 295)", fontSize: "0.8rem", letterSpacing: "0.15em" }}
-              >
-                nothing is being held here
-              </div>
-            ) : (
-              <div
-                className="grid gap-5"
-                style={{
-                  gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-                }}
-              >
-                {artifacts.map((artifact) => (
-                  <ArtifactCard
-                    key={artifact.id}
-                    artifact={artifact}
-                    sessionId={sessionId}
-                    onQuipped={refetch}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-
+              {artifacts.map((artifact) => (
+                <ArtifactCard
+                  key={artifact.id}
+                  artifact={artifact}
+                  sessionId={sessionId}
+                  onQuipped={refetch}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
 

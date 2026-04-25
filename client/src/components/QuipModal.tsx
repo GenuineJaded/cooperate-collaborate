@@ -20,7 +20,7 @@ const MAX_FILE_BYTES = 5 * 1024 * 1024; // 5MB
 export default function QuipModal({ artifact, onClose, onQuipped }: Props) {
   const [nama, setNama] = useState("");
   const [body, setBody] = useState("");
-  const [artifactLabel, setArtifactLabel] = useState("Quip");
+  const [quipLabel, setQuipLabel] = useState("Quip");
   const [editingLabel, setEditingLabel] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
@@ -28,6 +28,7 @@ export default function QuipModal({ artifact, onClose, onQuipped }: Props) {
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const uploadFile = trpc.quip.uploadFile.useMutation();
@@ -36,6 +37,12 @@ export default function QuipModal({ artifact, onClose, onQuipped }: Props) {
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
     if (!f) return;
+    if (f.size > MAX_FILE_BYTES) {
+      setError("File exceeds 5MB — consider another route for larger work.");
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
+    setError(null);
     setPendingFile(f);
     setShowUploadPause(true);
   };
@@ -45,7 +52,6 @@ export default function QuipModal({ artifact, onClose, onQuipped }: Props) {
     setShowUploadPause(false);
     setUploading(true);
     try {
-      const base64 = await fileToBase64(pendingFile);
       setFile(pendingFile);
       setFilePreview(URL.createObjectURL(pendingFile));
     } finally {
@@ -63,6 +69,7 @@ export default function QuipModal({ artifact, onClose, onQuipped }: Props) {
   const handleSubmit = async () => {
     if (!body.trim() && !file) return;
     setSubmitting(true);
+    setError(null);
     try {
       let fileUrl: string | undefined;
       let fileKey: string | undefined;
@@ -89,6 +96,7 @@ export default function QuipModal({ artifact, onClose, onQuipped }: Props) {
       onQuipped();
     } catch (err) {
       console.error(err);
+      setError("Something did not hold. Try again.");
     } finally {
       setSubmitting(false);
     }
@@ -104,22 +112,22 @@ export default function QuipModal({ artifact, onClose, onQuipped }: Props) {
         className="relative w-full max-w-2xl mx-4 animate-fade-in-up"
         style={{
           background: "oklch(0.07 0.01 280)",
-          border: "1px solid oklch(0.22 0.06 295 / 0.5)",
+          border: "1px solid oklch(0.28 0.08 295 / 0.55)",
           borderRadius: "2px",
-          padding: "1.5rem",
+          padding: "2rem",
         }}
       >
-        {/* Blinking rectangle — "Artifact" label, editable feel */}
-        <div className="mb-4">
+        {/* Blinking rectangle — "Quip" label */}
+        <div className="mb-5">
           <div
             className="animate-blink inline-block"
             style={{
-              border: "1px solid oklch(0.35 0.10 295 / 0.6)",
+              border: "1px solid oklch(0.40 0.12 295 / 0.65)",
               borderRadius: "1px",
-              padding: "0.2rem 0.6rem",
+              padding: "0.25rem 0.7rem",
               fontSize: "0.65rem",
-              letterSpacing: "0.2em",
-              color: "oklch(0.45 0.12 295)",
+              letterSpacing: "0.22em",
+              color: "oklch(0.55 0.14 295)",
               cursor: "text",
               userSelect: "none",
             }}
@@ -128,59 +136,63 @@ export default function QuipModal({ artifact, onClose, onQuipped }: Props) {
             {editingLabel ? (
               <input
                 autoFocus
-                value={artifactLabel}
-                onChange={(e) => setArtifactLabel(e.target.value)}
+                value={quipLabel}
+                onChange={(e) => setQuipLabel(e.target.value)}
                 onBlur={() => setEditingLabel(false)}
                 onKeyDown={(e) => e.key === "Enter" && setEditingLabel(false)}
                 style={{
                   background: "none",
                   border: "none",
                   outline: "none",
-                  color: "oklch(0.45 0.12 295)",
+                  color: "oklch(0.55 0.14 295)",
                   fontSize: "0.65rem",
-                  letterSpacing: "0.2em",
-                  width: `${Math.max(8, artifactLabel.length + 1)}ch`,
+                  letterSpacing: "0.22em",
+                  width: `${Math.max(6, quipLabel.length + 1)}ch`,
                 }}
               />
             ) : (
-              artifactLabel
+              quipLabel
             )}
           </div>
         </div>
 
-        {/* Body — text area */}
+        {/* Body textarea */}
         <textarea
           value={body}
           onChange={(e) => setBody(e.target.value)}
           placeholder=""
-          rows={5}
-          className="w-full resize-none outline-none text-sm leading-relaxed"
+          rows={6}
+          className="w-full resize-none outline-none leading-relaxed"
           style={{
             background: "none",
             border: "none",
-            color: "oklch(0.78 0.04 295)",
+            borderBottom: "1px solid oklch(0.18 0.05 295 / 0.4)",
+            color: "oklch(0.82 0.05 295)",
             fontWeight: 300,
-            caretColor: "oklch(0.55 0.16 295)",
-            marginBottom: "1rem",
+            fontSize: "0.95rem",
+            lineHeight: 1.85,
+            caretColor: "oklch(0.65 0.18 295)",
+            marginBottom: "1.5rem",
+            paddingBottom: "0.75rem",
           }}
         />
 
-        {/* File preview — image, video, or audio */}
+        {/* File preview — image, video, audio, or chip */}
         {filePreview && file && (
-          <div className="mb-4">
+          <div className="mb-5">
             {file.type.startsWith("image/") ? (
               <img
                 src={filePreview}
                 alt=""
                 className="max-w-full rounded-sm"
-                style={{ maxHeight: "240px", objectFit: "contain" }}
+                style={{ maxHeight: "260px", objectFit: "contain" }}
               />
             ) : file.type.startsWith("video/") ? (
               <video
                 src={filePreview}
                 controls
                 className="max-w-full rounded-sm"
-                style={{ maxHeight: "240px" }}
+                style={{ maxHeight: "260px" }}
               />
             ) : file.type.startsWith("audio/") ? (
               <audio
@@ -195,11 +207,11 @@ export default function QuipModal({ artifact, onClose, onQuipped }: Props) {
                   display: "inline-flex",
                   alignItems: "center",
                   gap: "0.4rem",
-                  border: "1px solid oklch(0.22 0.06 295 / 0.45)",
+                  border: "1px solid oklch(0.28 0.08 295 / 0.5)",
                   borderRadius: "2px",
-                  padding: "0.3rem 0.6rem",
-                  color: "oklch(0.55 0.12 295)",
-                  fontSize: "0.7rem",
+                  padding: "0.3rem 0.7rem",
+                  color: "oklch(0.60 0.14 295)",
+                  fontSize: "0.72rem",
                   letterSpacing: "0.1em",
                 }}
               >
@@ -210,9 +222,18 @@ export default function QuipModal({ artifact, onClose, onQuipped }: Props) {
           </div>
         )}
 
-        {/* Bottom row: Nama + file + submit */}
-        <div className="flex items-center gap-3 mt-2">
-          {/* Nama */}
+        {/* Error message */}
+        {error && (
+          <div
+            className="mb-4 text-xs"
+            style={{ color: "oklch(0.62 0.14 25)", letterSpacing: "0.08em" }}
+          >
+            {error}
+          </div>
+        )}
+
+        {/* Bottom row: Nāma + attach + leave */}
+        <div className="flex items-center gap-4 mt-1">
           <input
             value={nama}
             onChange={(e) => setNama(e.target.value)}
@@ -222,24 +243,25 @@ export default function QuipModal({ artifact, onClose, onQuipped }: Props) {
             style={{
               background: "none",
               border: "none",
-              borderBottom: "1px solid oklch(0.20 0.05 295 / 0.5)",
-              color: "oklch(0.45 0.10 295)",
-              padding: "0.2rem 0",
-              letterSpacing: "0.15em",
+              borderBottom: "1px solid oklch(0.22 0.06 295 / 0.5)",
+              color: "oklch(0.58 0.12 295)",
+              padding: "0.25rem 0",
+              letterSpacing: "0.18em",
             }}
           />
 
-          {/* File upload */}
+          {/* Attach */}
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="text-xs"
+            title="attach"
             style={{
               background: "none",
               border: "none",
-              color: "oklch(0.35 0.08 295)",
+              color: "oklch(0.42 0.10 295)",
               padding: "0.2rem",
+              fontSize: "1.1rem",
+              lineHeight: 1,
             }}
-            title="attach"
           >
             ⊕
           </button>
@@ -258,14 +280,14 @@ export default function QuipModal({ artifact, onClose, onQuipped }: Props) {
             className="text-xs tracking-widest transition-all duration-300"
             style={{
               background: "none",
-              border: "1px solid oklch(0.30 0.10 295 / 0.5)",
+              border: "1px solid oklch(0.38 0.12 295 / 0.6)",
               color:
-                submitting || (!body.trim() && !file)
-                  ? "oklch(0.28 0.06 295)"
-                  : "oklch(0.55 0.16 295)",
-              padding: "0.3rem 0.8rem",
+                submitting || uploading || (!body.trim() && !file)
+                  ? "oklch(0.30 0.07 295)"
+                  : "oklch(0.65 0.18 295)",
+              padding: "0.35rem 1rem",
               borderRadius: "1px",
-              letterSpacing: "0.15em",
+              letterSpacing: "0.18em",
             }}
           >
             {submitting ? "…" : "leave"}
@@ -275,12 +297,12 @@ export default function QuipModal({ artifact, onClose, onQuipped }: Props) {
         {/* Close */}
         <button
           onClick={onClose}
-          className="absolute top-3 right-3"
+          className="absolute top-4 right-4"
           style={{
             background: "none",
             border: "none",
-            color: "oklch(0.30 0.06 295)",
-            fontSize: "1rem",
+            color: "oklch(0.35 0.08 295)",
+            fontSize: "1.1rem",
             lineHeight: 1,
           }}
         >
@@ -296,7 +318,7 @@ export default function QuipModal({ artifact, onClose, onQuipped }: Props) {
         >
           <div
             className="text-center max-w-sm px-8 animate-fade-in-up"
-            style={{ color: "oklch(0.42 0.10 295)" }}
+            style={{ color: "oklch(0.48 0.12 295)" }}
           >
             <p
               className="text-sm leading-relaxed mb-8"

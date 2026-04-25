@@ -59,3 +59,11 @@
 ## Tests
 - [x] Vitest: decay shade calculation logic (4 cases)
 - [x] Vitest: auth logout
+
+## Fixes (round 1)
+- [ ] Rename "place" button back to "quip" on artifact cards — quip is the action label
+- [ ] Multi-Color-Displays panel: fix vertical positioning so it sits centered in the field, not pinned to top
+- [ ] Multi-Color-Displays panel: make the wheels actually interactive/engageable when expanded
+- [ ] Artifact blinking rectangle: change blink interval from 3s to 2s
+- [ ] Intimate Collaborate: change blink interval from 3s to 2s (if blinking element present)
+- [ ] Quip modal blinking rectangle: label should say "Quip" not "Artifact" (three windows, three labels: Artifact / Quip / Intimate Collaborate, same mechanism)

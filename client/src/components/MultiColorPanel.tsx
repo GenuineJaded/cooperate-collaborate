@@ -18,36 +18,73 @@ export default function MultiColorPanel() {
     <div
       className="flex-shrink-0 flex flex-col"
       style={{
-        width: collapsed ? "2rem" : "160px",
+        width: collapsed ? "2rem" : "180px",
         transition: "width 0.4s ease",
         borderRight: "1px solid oklch(0.15 0.04 295 / 0.3)",
         background: "oklch(0.06 0.01 280)",
         position: "relative",
         zIndex: 10,
+        alignSelf: "stretch",
       }}
     >
-      {/* Toggle */}
-      <button
-        onClick={() => setCollapsed(!collapsed)}
-        className="w-full flex items-center justify-center py-4"
-        style={{
-          background: "none",
-          border: "none",
-          color: "oklch(0.35 0.08 295)",
-          fontSize: "0.6rem",
-          letterSpacing: "0.1em",
-          writingMode: collapsed ? "vertical-rl" : "horizontal-tb",
-          transform: collapsed ? "rotate(180deg)" : "none",
-          transition: "all 0.4s ease",
-          minHeight: "80px",
-        }}
+      {/* Toggle — vertically centered */}
+      <div
+        className="flex flex-col items-center justify-center"
+        style={{ flex: 1, minHeight: 0 }}
       >
-        Multi-Color-Displays
-      </button>
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          style={{
+            background: "none",
+            border: "none",
+            color: "oklch(0.38 0.08 295)",
+            fontSize: "0.6rem",
+            letterSpacing: "0.12em",
+            writingMode: "vertical-rl",
+            transform: collapsed ? "rotate(180deg)" : "rotate(180deg)",
+            transition: "color 0.3s ease",
+            padding: "1rem 0.5rem",
+            cursor: "pointer",
+          }}
+          onMouseEnter={(e) =>
+            ((e.target as HTMLElement).style.color = "oklch(0.55 0.14 295)")
+          }
+          onMouseLeave={(e) =>
+            ((e.target as HTMLElement).style.color = "oklch(0.38 0.08 295)")
+          }
+        >
+          Multi-Color-Displays
+        </button>
+      </div>
 
-      {/* Wheels — only visible when expanded */}
+      {/* Expanded content — overlays to the right without pushing layout */}
       {!collapsed && (
-        <div className="flex flex-col gap-6 px-3 pb-6 animate-fade-in-up">
+        <div
+          className="absolute top-0 left-full animate-fade-in-up"
+          style={{
+            background: "oklch(0.07 0.01 280)",
+            border: "1px solid oklch(0.18 0.05 295 / 0.4)",
+            borderLeft: "none",
+            padding: "1.5rem 1rem",
+            width: "160px",
+            top: "50%",
+            transform: "translateY(-50%)",
+            display: "flex",
+            flexDirection: "column",
+            gap: "1.5rem",
+          }}
+        >
+          <p
+            style={{
+              color: "oklch(0.35 0.08 295)",
+              fontSize: "0.55rem",
+              letterSpacing: "0.15em",
+              textAlign: "center",
+            }}
+          >
+            perceptual only
+          </p>
+
           <ColorWheelControl
             label="A"
             value={wheel1}
@@ -61,30 +98,38 @@ export default function MultiColorPanel() {
             color={toOklch(wheel2)}
           />
 
-          {/* Preview swatch */}
-          <div className="flex gap-2 mt-2">
+          {/* Preview swatches */}
+          <div className="flex gap-2">
             <div
-              className="flex-1 h-6 rounded-sm"
-              style={{ background: toOklch(wheel1), opacity: 0.7 }}
+              style={{
+                flex: 1,
+                height: "8px",
+                borderRadius: "1px",
+                background: toOklch(wheel1),
+                opacity: 0.75,
+              }}
             />
             <div
-              className="flex-1 h-6 rounded-sm"
-              style={{ background: toOklch(wheel2), opacity: 0.7 }}
+              style={{
+                flex: 1,
+                height: "8px",
+                borderRadius: "1px",
+                background: toOklch(wheel2),
+                opacity: 0.75,
+              }}
             />
           </div>
 
           <p
-            className="text-xs"
             style={{
-              color: "oklch(0.28 0.06 295)",
-              fontSize: "0.55rem",
+              color: "oklch(0.25 0.05 295)",
+              fontSize: "0.5rem",
               letterSpacing: "0.1em",
-              lineHeight: 1.6,
+              lineHeight: 1.7,
+              textAlign: "center",
             }}
           >
-            perceptual only.
-            <br />
-            others see nothing.
+            others see nothing
           </p>
         </div>
       )}
@@ -101,13 +146,8 @@ interface WheelProps {
 
 function ColorWheelControl({ label, value, onChange, color }: WheelProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [dragging, setDragging] = useState(false);
 
   useEffect(() => {
-    drawWheel();
-  }, []);
-
-  const drawWheel = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -115,28 +155,29 @@ function ColorWheelControl({ label, value, onChange, color }: WheelProps) {
     const size = canvas.width;
     const cx = size / 2;
     const cy = size / 2;
-    const r = size / 2 - 2;
+    const r = size / 2 - 1;
 
-    for (let angle = 0; angle < 360; angle += 1) {
+    // Draw hue ring
+    for (let angle = 0; angle < 360; angle += 2) {
       const startAngle = ((angle - 1) * Math.PI) / 180;
       const endAngle = ((angle + 1) * Math.PI) / 180;
       ctx.beginPath();
       ctx.moveTo(cx, cy);
       ctx.arc(cx, cy, r, startAngle, endAngle);
       ctx.closePath();
-      ctx.fillStyle = `hsl(${angle}, 60%, 45%)`;
+      ctx.fillStyle = `hsl(${angle}, 55%, 42%)`;
       ctx.fill();
     }
 
-    // Center circle — lightness control area
-    const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, r * 0.5);
-    gradient.addColorStop(0, "rgba(255,255,255,0.9)");
-    gradient.addColorStop(1, "rgba(255,255,255,0)");
+    // Center fade to dark
+    const gradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, r * 0.55);
+    gradient.addColorStop(0, "rgba(8,6,16,0.92)");
+    gradient.addColorStop(1, "rgba(8,6,16,0)");
     ctx.beginPath();
-    ctx.arc(cx, cy, r * 0.5, 0, Math.PI * 2);
+    ctx.arc(cx, cy, r * 0.55, 0, Math.PI * 2);
     ctx.fillStyle = gradient;
     ctx.fill();
-  };
+  }, []);
 
   const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
@@ -144,42 +185,55 @@ function ColorWheelControl({ label, value, onChange, color }: WheelProps) {
     const rect = canvas.getBoundingClientRect();
     const x = e.clientX - rect.left - canvas.width / 2;
     const y = e.clientY - rect.top - canvas.height / 2;
-    const angle = (Math.atan2(y, x) * 180) / Math.PI;
-    const hue = ((angle + 360) % 360);
     const dist = Math.sqrt(x * x + y * y) / (canvas.width / 2);
-    const saturation = Math.min(0.25, dist * 0.25);
-    const lightness = Math.max(0.2, Math.min(0.7, 0.45 + (0.5 - dist) * 0.3));
-    onChange({ hue: Math.round(hue), saturation, lightness });
+    if (dist < 0.3) return; // ignore center
+    const angle = (Math.atan2(y, x) * 180) / Math.PI;
+    const hue = Math.round(((angle + 360) % 360));
+    const saturation = Math.min(0.22, 0.08 + dist * 0.16);
+    onChange({ ...value, hue, saturation });
   };
 
+  // Indicator position on wheel edge
+  const indicatorAngle = (value.hue * Math.PI) / 180;
+  const indicatorR = 30;
+
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}>
       <p
-        className="text-xs"
-        style={{ color: "oklch(0.35 0.08 295)", fontSize: "0.6rem", letterSpacing: "0.15em" }}
+        style={{
+          color: "oklch(0.38 0.08 295)",
+          fontSize: "0.58rem",
+          letterSpacing: "0.18em",
+        }}
       >
         {label}
       </p>
-      <div className="relative">
+
+      <div style={{ position: "relative", display: "inline-block" }}>
         <canvas
           ref={canvasRef}
-          width={80}
-          height={80}
+          width={72}
+          height={72}
           onClick={handleCanvasClick}
-          className="rounded-full cursor-crosshair"
-          style={{ display: "block", opacity: 0.8 }}
-        />
-        {/* Indicator dot */}
-        <div
-          className="absolute w-2 h-2 rounded-full border border-white/50 pointer-events-none"
           style={{
+            display: "block",
+            borderRadius: "50%",
+            cursor: "crosshair",
+            opacity: 0.85,
+          }}
+        />
+        {/* Hue indicator dot */}
+        <div
+          style={{
+            position: "absolute",
+            width: "6px",
+            height: "6px",
+            borderRadius: "50%",
             background: color,
-            top: "50%",
-            left: "50%",
-            transform: `translate(
-              calc(-50% + ${Math.cos((value.hue * Math.PI) / 180) * 28}px),
-              calc(-50% + ${Math.sin((value.hue * Math.PI) / 180) * 28}px)
-            )`,
+            border: "1px solid rgba(255,255,255,0.4)",
+            pointerEvents: "none",
+            top: `calc(50% + ${Math.sin(indicatorAngle) * indicatorR}px - 3px)`,
+            left: `calc(50% + ${Math.cos(indicatorAngle) * indicatorR}px - 3px)`,
           }}
         />
       </div>
@@ -188,13 +242,17 @@ function ColorWheelControl({ label, value, onChange, color }: WheelProps) {
       <input
         type="range"
         min="20"
-        max="80"
+        max="75"
         value={Math.round(value.lightness * 100)}
         onChange={(e) =>
           onChange({ ...value, lightness: parseInt(e.target.value) / 100 })
         }
-        className="w-full"
-        style={{ accentColor: color, height: "2px" }}
+        style={{
+          width: "100%",
+          accentColor: color,
+          height: "2px",
+          cursor: "pointer",
+        }}
       />
     </div>
   );

@@ -89,7 +89,7 @@ export default function Forum() {
                 letterSpacing: "0.2em",
               }}
             >
-              place
+              quip
             </button>
           </div>
 

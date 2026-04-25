@@ -20,7 +20,7 @@ const MAX_FILE_BYTES = 5 * 1024 * 1024; // 5MB
 export default function QuipModal({ artifact, onClose, onQuipped }: Props) {
   const [nama, setNama] = useState("");
   const [body, setBody] = useState("");
-  const [artifactLabel, setArtifactLabel] = useState("Artifact");
+  const [artifactLabel, setArtifactLabel] = useState("Quip");
   const [editingLabel, setEditingLabel] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);

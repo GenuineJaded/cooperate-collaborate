@@ -54,7 +54,8 @@ export default function ArtifactCard({ artifact, sessionId, onQuipped }: Props) 
         style={{
           borderWidth: "1px",
           borderRadius: "2px",
-          padding: "1.25rem",
+          padding: "1.75rem",
+          minHeight: "220px",
           background: "oklch(0.07 0.01 280 / 0.85)",
           backdropFilter: "blur(4px)",
           transition: "border-color 2s ease, box-shadow 2s ease",
@@ -88,12 +89,14 @@ export default function ArtifactCard({ artifact, sessionId, onQuipped }: Props) 
         {/* Body — clicking opens quip */}
         {artifact.body && (
           <p
-            className="text-sm leading-relaxed mb-4"
+            className="leading-relaxed mb-4"
             style={{
               color: "oklch(0.78 0.04 295)",
               fontWeight: 300,
               whiteSpace: "pre-wrap",
               cursor: "pointer",
+              fontSize: "0.95rem",
+              lineHeight: 1.75,
             }}
             onClick={() => setShowQuip(true)}
           >
@@ -161,19 +164,42 @@ export default function ArtifactCard({ artifact, sessionId, onQuipped }: Props) 
   );
 }
 
-// FileAttachment — renders images inline, other files as a chip
+// FileAttachment — renders images/video/audio inline, other files as a chip
 function FileAttachment({ url }: { url: string }) {
   const ext = url.split("?")[0].split(".").pop()?.toLowerCase() ?? "";
   const imageExts = ["jpg", "jpeg", "png", "gif", "webp", "svg", "avif"];
-  const isImage = imageExts.includes(ext) || url.includes("/manus-storage/");
+  const videoExts = ["mp4", "webm", "ogg", "mov"];
+  const audioExts = ["mp3", "wav", "ogg", "m4a", "flac", "aac"];
 
-  if (isImage) {
+  if (imageExts.includes(ext)) {
     return (
       <img
         src={url}
         alt=""
         className="max-w-full rounded-sm"
-        style={{ maxHeight: "280px", objectFit: "contain" }}
+        style={{ maxHeight: "300px", objectFit: "contain" }}
+      />
+    );
+  }
+
+  if (videoExts.includes(ext)) {
+    return (
+      <video
+        src={url}
+        controls
+        className="max-w-full rounded-sm"
+        style={{ maxHeight: "300px" }}
+      />
+    );
+  }
+
+  if (audioExts.includes(ext)) {
+    return (
+      <audio
+        src={url}
+        controls
+        className="w-full"
+        style={{ filter: "invert(0.85) hue-rotate(220deg)" }}
       />
     );
   }

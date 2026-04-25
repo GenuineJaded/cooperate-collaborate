@@ -86,7 +86,7 @@ export default function NewArtifactForm({ door, onClose, onCreated }: Props) {
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
-        className="relative w-full max-w-lg mx-4 animate-fade-in-up"
+        className="relative w-full max-w-2xl mx-4 animate-fade-in-up"
         style={{
           background: "oklch(0.07 0.01 280)",
           border: "1px solid oklch(0.22 0.06 295 / 0.5)",
@@ -149,15 +149,48 @@ export default function NewArtifactForm({ door, onClose, onCreated }: Props) {
           }}
         />
 
-        {/* File preview */}
-        {filePreview && (
+        {/* File preview — image, video, or audio */}
+        {filePreview && file && (
           <div className="mb-4">
-            <img
-              src={filePreview}
-              alt=""
-              className="max-w-full rounded-sm"
-              style={{ maxHeight: "200px", objectFit: "contain" }}
-            />
+            {file.type.startsWith("image/") ? (
+              <img
+                src={filePreview}
+                alt=""
+                className="max-w-full rounded-sm"
+                style={{ maxHeight: "260px", objectFit: "contain" }}
+              />
+            ) : file.type.startsWith("video/") ? (
+              <video
+                src={filePreview}
+                controls
+                className="max-w-full rounded-sm"
+                style={{ maxHeight: "260px" }}
+              />
+            ) : file.type.startsWith("audio/") ? (
+              <audio
+                src={filePreview}
+                controls
+                className="w-full"
+                style={{ filter: "invert(0.85) hue-rotate(220deg)" }}
+              />
+            ) : (
+              <span
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.4rem",
+                  border: "1px solid oklch(0.22 0.06 295 / 0.45)",
+                  borderRadius: "2px",
+                  padding: "0.3rem 0.6rem",
+                  color: "oklch(0.55 0.12 295)",
+                  fontSize: "0.7rem",
+                  letterSpacing: "0.1em",
+                }}
+              >
+                <span style={{ opacity: 0.6 }}>⊕</span>
+                {file.name}
+              </span>
+            )}
           </div>
         )}
 

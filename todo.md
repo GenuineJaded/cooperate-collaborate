@@ -108,3 +108,11 @@
 
 ## Fixes (round 8)
 - [x] Forum: Draft Artifact button and artifact grid must sit side-by-side in the same row — button left, grid right
+
+## Fixes (round 9)
+- [x] ArtifactCard: make the card larger (taller min-height, bigger text, more internal padding)
+- [x] NewArtifactForm + QuipModal: add media upload support (images, video, audio) with preview
+
+## Fixes (round 10 — pending)
+- [ ] NewArtifactForm + QuipModal: add user-facing error state for upload/submit failures (not just console.error)
+- [ ] NewArtifactForm + QuipModal: enforce MAX_FILE_BYTES (5MB) with clear feedback for oversized files

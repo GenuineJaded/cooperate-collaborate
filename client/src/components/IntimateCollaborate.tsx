@@ -59,13 +59,23 @@ export default function IntimateCollaborate({ artifactId, sessionId, onClose }: 
           flexDirection: "column",
         }}
       >
-        {/* Label */}
-        <p
-          className="text-xs tracking-widest mb-4"
-          style={{ color: "oklch(0.38 0.10 295)", letterSpacing: "0.25em" }}
-        >
-          Intimate Collaborate
-        </p>
+        {/* Blinking rectangle — same mechanism as Artifact and Quip windows */}
+        <div className="mb-4">
+          <div
+            className="animate-blink inline-block"
+            style={{
+              border: "1px solid oklch(0.35 0.10 295 / 0.6)",
+              borderRadius: "1px",
+              padding: "0.2rem 0.6rem",
+              fontSize: "0.65rem",
+              letterSpacing: "0.2em",
+              color: "oklch(0.45 0.12 295)",
+              userSelect: "none",
+            }}
+          >
+            Intimate Collaborate
+          </div>
+        </div>
 
         {!disclosed ? (
           /* Disclosure — stated once, plainly */

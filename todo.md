@@ -61,9 +61,15 @@
 - [x] Vitest: auth logout
 
 ## Fixes (round 1)
-- [ ] Rename "place" button back to "quip" on artifact cards — quip is the action label
-- [ ] Multi-Color-Displays panel: fix vertical positioning so it sits centered in the field, not pinned to top
-- [ ] Multi-Color-Displays panel: make the wheels actually interactive/engageable when expanded
-- [ ] Artifact blinking rectangle: change blink interval from 3s to 2s
-- [ ] Intimate Collaborate: change blink interval from 3s to 2s (if blinking element present)
-- [ ] Quip modal blinking rectangle: label should say "Quip" not "Artifact" (three windows, three labels: Artifact / Quip / Intimate Collaborate, same mechanism)
+- [x] Rename "place" button back to "quip" on artifact cards — quip is the action label
+- [x] Multi-Color-Displays panel: fix vertical positioning so it sits centered in the field, not pinned to top
+- [x] Multi-Color-Displays panel: make the wheels actually interactive/engageable when expanded
+- [x] Artifact blinking rectangle: change blink interval from 3s to 2s
+- [x] Intimate Collaborate: change blink interval from 3s to 2s (if blinking element present)
+- [x] Quip modal blinking rectangle: label should say "Quip" not "Artifact" (three windows, three labels: Artifact / Quip / Intimate Collaborate, same mechanism)
+
+## Fixes (round 2)
+- [ ] Multi-Color-Displays: restore hinge-upward behavior (panel opens upward from bottom-left, not as side overlay)
+- [ ] Multi-Color-Displays: make color selection actually apply visibly (wheels must respond to click and show selection)
+- [ ] Multi-Color-Displays: add a clear "return to default" button inside the panel
+- [ ] Landing page: increase text brightness/contrast so all lines read clearly — warm, not strained

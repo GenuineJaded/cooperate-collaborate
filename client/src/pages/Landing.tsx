@@ -1,5 +1,5 @@
 import { useLocation } from "wouter";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 export default function Landing() {
   const [, navigate] = useLocation();
@@ -11,7 +11,6 @@ export default function Landing() {
     setTimeout(() => navigate("/field"), 700);
   };
 
-  // Generate stripe positions once
   const stripes = Array.from({ length: 14 }, (_, i) => ({
     left: `${-10 + i * 8}%`,
     delay: `${(i * 0.7) % 9}s`,
@@ -33,7 +32,7 @@ export default function Landing() {
         }}
       />
 
-      {/* Diagonal stripes — each breathes at its own rhythm */}
+      {/* Diagonal stripes */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {stripes.map((s, i) => (
           <div
@@ -57,7 +56,6 @@ export default function Landing() {
       <div
         className="relative z-10 text-center px-8 max-w-lg mx-auto animate-fade-in-up"
         style={{
-          color: "oklch(0.45 0.18 295)",
           animationDelay: "0.3s",
           opacity: entered ? 0 : 1,
           transition: "opacity 0.6s ease",
@@ -65,43 +63,43 @@ export default function Landing() {
       >
         <p
           className="text-base leading-loose tracking-wide mb-2"
-          style={{ color: "oklch(0.50 0.16 295)", fontWeight: 300 }}
+          style={{ color: "oklch(0.88 0.10 295)", fontWeight: 400 }}
         >
           You are here.
         </p>
 
         <p
           className="text-sm leading-loose tracking-widest mb-8"
-          style={{ color: "oklch(0.42 0.14 295)", fontWeight: 300 }}
+          style={{ color: "oklch(0.80 0.09 295)", fontWeight: 300 }}
         >
           Nothing begins until you move.
         </p>
 
         <p
           className="text-sm leading-loose mb-2"
-          style={{ color: "oklch(0.48 0.15 295)", fontWeight: 300 }}
+          style={{ color: "oklch(0.84 0.11 295)", fontWeight: 300 }}
         >
           Three doors.
           <br />
-          <span style={{ color: "oklch(0.38 0.12 295)", fontSize: "0.8rem" }}>
+          <span style={{ color: "oklch(0.74 0.09 295)", fontSize: "0.8rem" }}>
             The labels are inherited. Insufficient. Used anyway.
           </span>
           <br />
-          <span style={{ color: "oklch(0.38 0.12 295)", fontSize: "0.8rem" }}>
+          <span style={{ color: "oklch(0.74 0.09 295)", fontSize: "0.8rem" }}>
             Your choice of door is part of what you leave.
           </span>
         </p>
 
         <p
           className="text-sm tracking-widest mb-10"
-          style={{ color: "oklch(0.42 0.13 295)", letterSpacing: "0.3em" }}
+          style={{ color: "oklch(0.82 0.11 295)", letterSpacing: "0.3em" }}
         >
           writing · music · art
         </p>
 
         <p
           className="text-xs leading-relaxed mb-12"
-          style={{ color: "oklch(0.38 0.11 295)", fontWeight: 300 }}
+          style={{ color: "oklch(0.74 0.08 295)", fontWeight: 300 }}
         >
           Held while in contact. Released in absence.
           <br />
@@ -124,22 +122,21 @@ export default function Landing() {
           <span
             className="text-2xl tracking-[0.4em] transition-all duration-500"
             style={{
-              color: "oklch(0.45 0.18 295)",
+              color: "oklch(0.82 0.18 295)",
               fontWeight: 200,
               fontStyle: "italic",
               letterSpacing: "0.5em",
-              textShadow: "0 0 20px oklch(0.45 0.18 295 / 0.4)",
+              textShadow: "0 0 24px oklch(0.55 0.18 295 / 0.5)",
             }}
           >
             Patha
           </span>
-          {/* Subtle underline that breathes */}
           <span
             className="absolute bottom-0 left-1/2 -translate-x-1/2 h-px transition-all duration-500 group-hover:w-full"
             style={{
               width: "40%",
               background:
-                "linear-gradient(to right, transparent, oklch(0.45 0.18 295 / 0.6), transparent)",
+                "linear-gradient(to right, transparent, oklch(0.55 0.18 295 / 0.6), transparent)",
             }}
           />
         </button>

@@ -49,6 +49,7 @@ export default function Forum() {
           background: fieldColors.active ? fieldColors.bgColor : "oklch(0.04 0.01 280)",
           color: fieldColors.active ? fieldColors.textColor : undefined,
           transition: "background 0.6s ease, color 0.6s ease",
+          paddingLeft: "176px", /* clear the fixed MultiColorPanel tab (172px wide + 4px gap) */
         }}
       >
         {/* Three doors — parallel, equal weight */}

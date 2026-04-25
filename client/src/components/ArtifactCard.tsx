@@ -108,17 +108,30 @@ export default function ArtifactCard({ artifact, sessionId, onQuipped }: Props) 
           </div>
         )}
 
-        {/* Footer: quip — bottom-right */}
+        {/* Footer: quip — bottom-right, purple box */}
         <div className="flex items-center justify-end mt-2">
           <button
             onClick={() => setShowQuip(true)}
             className="text-xs tracking-widest transition-all duration-300"
             style={{
               background: "none",
-              border: "none",
-              color: "oklch(0.38 0.10 295)",
-              padding: "0.2rem 0",
+              border: "1px solid oklch(0.55 0.18 295 / 0.45)",
+              color: "oklch(0.45 0.12 295)",
+              padding: "0.2rem 0.7rem",
+              borderRadius: "2px",
               letterSpacing: "0.2em",
+              boxShadow: "0 0 6px oklch(0.55 0.18 295 / 0.08)",
+              transition: "all 0.25s ease",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.borderColor = "oklch(0.72 0.22 295 / 0.75)";
+              (e.currentTarget as HTMLButtonElement).style.color = "oklch(0.65 0.18 295)";
+              (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 0 12px oklch(0.55 0.18 295 / 0.22)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.borderColor = "oklch(0.55 0.18 295 / 0.45)";
+              (e.currentTarget as HTMLButtonElement).style.color = "oklch(0.45 0.12 295)";
+              (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 0 6px oklch(0.55 0.18 295 / 0.08)";
             }}
           >
             quip

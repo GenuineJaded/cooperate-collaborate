@@ -96,3 +96,8 @@
 
 ## Notes
 - Viewer-local text color (wheel B) currently applies to the forum field container and the Multi-Color-Displays tab label. Hardcoded inline colors on artifact cards, door tabs, and modals are not yet affected — intentionally deferred for stability.
+
+## Fixes (round 6)
+- [x] Forum: move "Draft Artifact" button to top-left (not top-right), rename from "quip" to "Draft Artifact", wrap in purple border box
+- [x] Forum: wrap the three door labels (writing · music · art) in purple border boxes
+- [x] ArtifactCard: wrap the "quip" button inside the card in a purple border box

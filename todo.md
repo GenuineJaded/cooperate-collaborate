@@ -103,5 +103,8 @@
 - [x] ArtifactCard: wrap the "quip" button inside the card in a purple border box
 
 ## Fixes (round 7)
-- [ ] Forum: Draft Artifact button — move further left so it clears the artifact grid entirely, with breathing room
-- [ ] Forum: three door labels (writing · music · art) — center them properly in the available width (accounting for the 176px panel offset)
+- [x] Forum: Draft Artifact button — move further left so it clears the artifact grid entirely, with breathing room
+- [x] Forum: three door labels (writing · music · art) — center them properly in the available width (accounting for the 176px panel offset)
+
+## Fixes (round 8)
+- [x] Forum: Draft Artifact button and artifact grid must sit side-by-side in the same row — button left, grid right

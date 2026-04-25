@@ -4,11 +4,15 @@ import { trpc } from "@/lib/trpc";
 import { shadeClass, shadeColor, getSessionId } from "@/lib/shades";
 import ArtifactCard from "@/components/ArtifactCard";
 import NewArtifactForm from "@/components/NewArtifactForm";
-import MultiColorPanel from "@/components/MultiColorPanel";
-
-export type FieldFilter = { hue1: number; hue2: number; active: boolean };
+import MultiColorPanel, { FieldColors } from "@/components/MultiColorPanel";
 
 type Door = "writing" | "music" | "art";
+
+const DEFAULT_COLORS: FieldColors = {
+  bgColor: "oklch(0.04 0.01 280)",
+  textColor: "oklch(0.55 0.18 295)",
+  active: false,
+};
 
 export default function Forum() {
   const params = useParams<{ door?: string }>();
@@ -16,7 +20,7 @@ export default function Forum() {
   const [activeDoor, setActiveDoor] = useState<Door>(door);
   const [showNewForm, setShowNewForm] = useState(false);
   const sessionId = getSessionId();
-  const [fieldFilter, setFieldFilter] = useState<FieldFilter>({ hue1: 295, hue2: 260, active: false });
+  const [fieldColors, setFieldColors] = useState<FieldColors>(DEFAULT_COLORS);
 
   const { data: artifacts, refetch } = trpc.artifact.list.useQuery({
     type: activeDoor,
@@ -36,16 +40,15 @@ export default function Forum() {
       style={{ background: "oklch(0.04 0.01 280)" }}
     >
       {/* Multi-Color-Displays — left panel */}
-      <MultiColorPanel onFilterChange={(f) => setFieldFilter(f)} />
+      <MultiColorPanel onColorsChange={(c) => setFieldColors(c)} />
 
-      {/* Main field — viewer-local hue filter applied when Multi-Color-Displays is active */}
+      {/* Main field — viewer-local colors applied when Multi-Color-Displays is active */}
       <div
         className="flex-1 flex flex-col min-h-screen"
         style={{
-          filter: fieldFilter.active
-            ? `hue-rotate(${fieldFilter.hue1 - 295}deg) saturate(1.1)`
-            : undefined,
-          transition: "filter 0.6s ease",
+          background: fieldColors.active ? fieldColors.bgColor : "oklch(0.04 0.01 280)",
+          color: fieldColors.active ? fieldColors.textColor : undefined,
+          transition: "background 0.6s ease, color 0.6s ease",
         }}
       >
         {/* Three doors — parallel, equal weight */}

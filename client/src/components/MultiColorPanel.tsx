@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 
-const DEFAULT_WHEEL1 = { hue: 295, saturation: 0.18, lightness: 0.45 };
-const DEFAULT_WHEEL2 = { hue: 260, saturation: 0.12, lightness: 0.35 };
+const DEFAULT_WHEEL1 = { hue: 280, saturation: 0.01, lightness: 0.04 }; // near-black background
+const DEFAULT_WHEEL2 = { hue: 295, saturation: 0.18, lightness: 0.55 }; // default purple text
 
 interface ColorWheel {
   hue: number;
@@ -9,45 +9,48 @@ interface ColorWheel {
   lightness: number;
 }
 
-interface PanelProps {
-  onFilterChange?: (f: { hue1: number; hue2: number; active: boolean }) => void;
+export interface FieldColors {
+  bgColor: string;
+  textColor: string;
+  active: boolean;
 }
 
-export default function MultiColorPanel({ onFilterChange }: PanelProps) {
+interface PanelProps {
+  onColorsChange?: (c: FieldColors) => void;
+}
+
+export default function MultiColorPanel({ onColorsChange }: PanelProps) {
   const [open, setOpen] = useState(false);
-  const [wheel1, setWheel1] = useState<ColorWheel>(DEFAULT_WHEEL1);
-  const [wheel2, setWheel2] = useState<ColorWheel>(DEFAULT_WHEEL2);
-  const [filterActive, setFilterActive] = useState(false);
+  const [wheel1, setWheel1] = useState<ColorWheel>(DEFAULT_WHEEL1); // background
+  const [wheel2, setWheel2] = useState<ColorWheel>(DEFAULT_WHEEL2); // text
+  const [applied, setApplied] = useState(false);
 
   const toOklch = (w: ColorWheel) =>
     `oklch(${w.lightness.toFixed(2)} ${w.saturation.toFixed(2)} ${w.hue})`;
 
-  const emitFilter = (w1: ColorWheel, w2: ColorWheel, active: boolean) => {
-    onFilterChange?.({ hue1: w1.hue, hue2: w2.hue, active });
+  const emit = (w1: ColorWheel, w2: ColorWheel, active: boolean) => {
+    onColorsChange?.({
+      bgColor: toOklch(w1),
+      textColor: toOklch(w2),
+      active,
+    });
   };
 
-  const handleWheel1Change = (v: ColorWheel) => {
-    setWheel1(v);
-    emitFilter(v, wheel2, filterActive);
-  };
-
-  const handleWheel2Change = (v: ColorWheel) => {
-    setWheel2(v);
-    emitFilter(wheel1, v, filterActive);
-  };
-
-  const toggleFilter = () => {
-    const next = !filterActive;
-    setFilterActive(next);
-    emitFilter(wheel1, wheel2, next);
+  const handleApply = () => {
+    const next = !applied;
+    setApplied(next);
+    emit(wheel1, wheel2, next);
   };
 
   const resetToDefault = () => {
     setWheel1({ ...DEFAULT_WHEEL1 });
     setWheel2({ ...DEFAULT_WHEEL2 });
-    setFilterActive(false);
-    emitFilter(DEFAULT_WHEEL1, DEFAULT_WHEEL2, false);
+    setApplied(false);
+    emit(DEFAULT_WHEEL1, DEFAULT_WHEEL2, false);
   };
+
+  // tab label color: use selected text color when applied, else default muted purple
+  const tabTextColor = applied ? toOklch(wheel2) : "oklch(0.42 0.09 295)";
 
   return (
     <div
@@ -61,7 +64,7 @@ export default function MultiColorPanel({ onFilterChange }: PanelProps) {
         alignItems: "flex-start",
       }}
     >
-      {/* Expanded panel — hinges upward from the tab */}
+      {/* Expanded panel — hinges upward */}
       {open && (
         <div
           className="animate-fade-in-up"
@@ -89,25 +92,25 @@ export default function MultiColorPanel({ onFilterChange }: PanelProps) {
           </p>
 
           <ColorWheelControl
-            label="A"
+            label="A — background"
             value={wheel1}
-            onChange={handleWheel1Change}
+            onChange={(v) => setWheel1(v)}
             color={toOklch(wheel1)}
           />
           <ColorWheelControl
-            label="B"
+            label="B — text"
             value={wheel2}
-            onChange={handleWheel2Change}
+            onChange={(v) => setWheel2(v)}
             color={toOklch(wheel2)}
           />
 
           {/* Apply toggle */}
           <button
-            onClick={toggleFilter}
+            onClick={handleApply}
             style={{
-              background: filterActive ? "oklch(0.18 0.06 295 / 0.5)" : "none",
+              background: applied ? "oklch(0.18 0.06 295 / 0.5)" : "none",
               border: "1px solid oklch(0.28 0.08 295 / 0.5)",
-              color: filterActive ? "oklch(0.70 0.14 295)" : "oklch(0.40 0.08 295)",
+              color: applied ? "oklch(0.70 0.14 295)" : "oklch(0.40 0.08 295)",
               fontSize: "0.55rem",
               letterSpacing: "0.18em",
               padding: "0.3rem 0",
@@ -117,7 +120,7 @@ export default function MultiColorPanel({ onFilterChange }: PanelProps) {
               transition: "all 0.25s ease",
             }}
           >
-            {filterActive ? "applied" : "apply"}
+            {applied ? "applied" : "apply"}
           </button>
 
           {/* Preview swatches */}
@@ -128,7 +131,8 @@ export default function MultiColorPanel({ onFilterChange }: PanelProps) {
                 height: "6px",
                 borderRadius: "1px",
                 background: toOklch(wheel1),
-                opacity: 0.8,
+                border: "1px solid oklch(0.25 0.05 295 / 0.3)",
+                opacity: 0.9,
               }}
             />
             <div
@@ -137,7 +141,7 @@ export default function MultiColorPanel({ onFilterChange }: PanelProps) {
                 height: "6px",
                 borderRadius: "1px",
                 background: toOklch(wheel2),
-                opacity: 0.8,
+                opacity: 0.9,
               }}
             />
           </div>
@@ -171,29 +175,30 @@ export default function MultiColorPanel({ onFilterChange }: PanelProps) {
         </div>
       )}
 
-      {/* Tab — always visible at bottom-left */}
+      {/* Tab — always visible at bottom-left, purple border like Pātha */}
       <button
         onClick={() => setOpen(!open)}
         style={{
-          background: open
-            ? "oklch(0.10 0.02 280)"
-            : "oklch(0.07 0.015 280)",
-          border: "1px solid oklch(0.20 0.06 295 / 0.45)",
-          borderBottom: open ? "1px solid oklch(0.07 0.015 280)" : "1px solid oklch(0.20 0.06 295 / 0.45)",
-          color: "oklch(0.42 0.09 295)",
+          background: open ? "oklch(0.10 0.02 280)" : "oklch(0.07 0.015 280)",
+          border: "1px solid oklch(0.55 0.18 295 / 0.55)",
+          borderBottom: open ? "1px solid oklch(0.07 0.015 280)" : "1px solid oklch(0.55 0.18 295 / 0.55)",
+          color: tabTextColor,
           fontSize: "0.55rem",
           letterSpacing: "0.14em",
           padding: "0.4rem 0.9rem",
           cursor: "pointer",
-          transition: "color 0.25s ease, background 0.25s ease",
+          transition: "color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease",
           whiteSpace: "nowrap",
+          boxShadow: "0 0 8px oklch(0.55 0.18 295 / 0.10)",
         }}
-        onMouseEnter={(e) =>
-          ((e.currentTarget as HTMLButtonElement).style.color = "oklch(0.60 0.14 295)")
-        }
-        onMouseLeave={(e) =>
-          ((e.currentTarget as HTMLButtonElement).style.color = "oklch(0.42 0.09 295)")
-        }
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 0 16px oklch(0.55 0.18 295 / 0.28)";
+          (e.currentTarget as HTMLButtonElement).style.borderColor = "oklch(0.72 0.22 295 / 0.80)";
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 0 8px oklch(0.55 0.18 295 / 0.10)";
+          (e.currentTarget as HTMLButtonElement).style.borderColor = "oklch(0.55 0.18 295 / 0.55)";
+        }}
       >
         Multi-Color-Displays
       </button>
@@ -223,7 +228,6 @@ function ColorWheelControl({ label, value, onChange, color }: WheelProps) {
 
     ctx.clearRect(0, 0, SIZE, SIZE);
 
-    // Draw hue ring
     for (let angle = 0; angle < 360; angle += 1) {
       const startAngle = ((angle - 0.5) * Math.PI) / 180;
       const endAngle = ((angle + 0.5) * Math.PI) / 180;
@@ -235,7 +239,6 @@ function ColorWheelControl({ label, value, onChange, color }: WheelProps) {
       ctx.fill();
     }
 
-    // Dark center
     const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r * 0.52);
     grad.addColorStop(0, "rgba(7,5,14,0.96)");
     grad.addColorStop(1, "rgba(7,5,14,0)");
@@ -244,7 +247,6 @@ function ColorWheelControl({ label, value, onChange, color }: WheelProps) {
     ctx.fillStyle = grad;
     ctx.fill();
 
-    // Selected hue indicator on ring
     const indicatorAngle = (value.hue * Math.PI) / 180;
     const ir = r * 0.78;
     const ix = cx + Math.cos(indicatorAngle) * ir;
@@ -270,7 +272,7 @@ function ColorWheelControl({ label, value, onChange, color }: WheelProps) {
     if (dist < 0.28 || dist > 0.98) return;
     const angle = (Math.atan2(y, x) * 180) / Math.PI;
     const hue = Math.round(((angle + 360) % 360));
-    const saturation = Math.min(0.24, 0.08 + dist * 0.18);
+    const saturation = Math.min(0.30, 0.06 + dist * 0.26);
     onChange({ ...value, hue, saturation });
   };
 
@@ -279,9 +281,10 @@ function ColorWheelControl({ label, value, onChange, color }: WheelProps) {
       <p
         style={{
           color: "oklch(0.42 0.09 295)",
-          fontSize: "0.58rem",
-          letterSpacing: "0.18em",
+          fontSize: "0.52rem",
+          letterSpacing: "0.14em",
           margin: 0,
+          textAlign: "center",
         }}
       >
         {label}
@@ -301,15 +304,14 @@ function ColorWheelControl({ label, value, onChange, color }: WheelProps) {
         }}
       />
 
-      {/* Lightness slider */}
       <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: "2px" }}>
         <p style={{ color: "oklch(0.32 0.06 295)", fontSize: "0.48rem", letterSpacing: "0.12em", margin: 0, textAlign: "center" }}>
           lightness
         </p>
         <input
           type="range"
-          min="18"
-          max="78"
+          min="2"
+          max="92"
           value={Math.round(value.lightness * 100)}
           onChange={(e) =>
             onChange({ ...value, lightness: parseInt(e.target.value) / 100 })

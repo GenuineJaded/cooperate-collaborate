@@ -85,6 +85,14 @@
 - [x] ArtifactCard + QuipModal: render non-image file attachments as a file chip (filename + type) rather than a broken img tag
 
 ## Fixes (round 4)
-- [ ] Landing: Patha button — replace underline with full purple border, making it clearly a button
-- [ ] Landing: correct spelling to Pātha (macron over first a)
-- [ ] ArtifactCard + QuipModal + NewArtifactForm: correct Nama label to Nāma (macron over a)
+- [x] Landing: Pātha button — replace underline with full purple border, making it clearly a button
+- [x] Landing: correct spelling to Pātha (macron over first a)
+- [x] ArtifactCard + QuipModal + NewArtifactForm: correct Nama label to Nāma (macron over a)
+
+## Fixes (round 5)
+- [x] MultiColorPanel: wheel A controls background color (not hue-rotate filter)
+- [x] MultiColorPanel: wheel B controls text color, also applied to the Multi-Color-Displays tab label
+- [x] MultiColorPanel: tab button gets same purple border as Pātha
+
+## Notes
+- Viewer-local text color (wheel B) currently applies to the forum field container and the Multi-Color-Displays tab label. Hardcoded inline colors on artifact cards, door tabs, and modals are not yet affected — intentionally deferred for stability.

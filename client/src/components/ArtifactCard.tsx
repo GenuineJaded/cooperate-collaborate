@@ -75,7 +75,7 @@ export default function ArtifactCard({ artifact, sessionId, onQuipped }: Props) 
           <FractalHeart shade={shade} />
         </button>
 
-        {/* Nama — top, quiet */}
+        {/* Nāma — top, quiet */}
         {artifact.nama && (
           <p
             className="text-xs mb-3 tracking-widest"

@@ -166,7 +166,7 @@ export default function NewArtifactForm({ door, onClose, onCreated }: Props) {
           <input
             value={nama}
             onChange={(e) => setNama(e.target.value)}
-            placeholder="Nama"
+            placeholder="Nāma"
             maxLength={128}
             className="flex-1 outline-none text-xs tracking-widest"
             style={{

@@ -83,3 +83,8 @@
 ## Fixes (round 3 — gaps)
 - [x] ArtifactCard: clicking the artifact body/card area opens the quip window (not just the quip button)
 - [x] ArtifactCard + QuipModal: render non-image file attachments as a file chip (filename + type) rather than a broken img tag
+
+## Fixes (round 4)
+- [ ] Landing: Patha button — replace underline with full purple border, making it clearly a button
+- [ ] Landing: correct spelling to Pātha (macron over first a)
+- [ ] ArtifactCard + QuipModal + NewArtifactForm: correct Nama label to Nāma (macron over a)

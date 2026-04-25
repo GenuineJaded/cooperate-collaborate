@@ -108,19 +108,30 @@ export default function Landing() {
           What stays, stays because someone is still here with it.
         </p>
 
-        {/* Patha — the entry */}
+        {/* Pātha — the entry */}
         <button
           onClick={handleEnter}
-          className="relative group"
+          className="group"
           style={{
             background: "none",
-            border: "none",
-            padding: "0.5rem 1.5rem",
+            border: "1px solid oklch(0.55 0.18 295 / 0.55)",
+            borderRadius: "2px",
+            padding: "0.5rem 1.8rem",
             cursor: "pointer",
+            transition: "border-color 0.4s ease, box-shadow 0.4s ease",
+            boxShadow: "0 0 12px oklch(0.55 0.18 295 / 0.12)",
+          }}
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLButtonElement).style.borderColor = "oklch(0.72 0.22 295 / 0.85)";
+            (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 0 22px oklch(0.55 0.18 295 / 0.35)";
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLButtonElement).style.borderColor = "oklch(0.55 0.18 295 / 0.55)";
+            (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 0 12px oklch(0.55 0.18 295 / 0.12)";
           }}
         >
           <span
-            className="text-2xl tracking-[0.4em] transition-all duration-500"
+            className="text-2xl tracking-[0.4em]"
             style={{
               color: "oklch(0.82 0.18 295)",
               fontWeight: 200,
@@ -129,16 +140,8 @@ export default function Landing() {
               textShadow: "0 0 24px oklch(0.55 0.18 295 / 0.5)",
             }}
           >
-            Patha
+            Pātha
           </span>
-          <span
-            className="absolute bottom-0 left-1/2 -translate-x-1/2 h-px transition-all duration-500 group-hover:w-full"
-            style={{
-              width: "40%",
-              background:
-                "linear-gradient(to right, transparent, oklch(0.55 0.18 295 / 0.6), transparent)",
-            }}
-          />
         </button>
       </div>
     </div>

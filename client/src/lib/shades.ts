@@ -1,13 +1,13 @@
 // Maps purpleShade (0-7) to CSS class and color values
 export const SHADE_COLORS = [
-  "oklch(0.95 0.00 0)",    // 0 — white
-  "oklch(0.80 0.06 295)",  // 1
-  "oklch(0.68 0.10 295)",  // 2
-  "oklch(0.56 0.14 295)",  // 3
-  "oklch(0.45 0.18 295)",  // 4
-  "oklch(0.36 0.20 295)",  // 5
-  "oklch(0.28 0.18 295)",  // 6
-  "oklch(0.20 0.14 295)",  // 7 — deepest
+  "oklch(0.95 0.00 0)",
+  "oklch(0.80 0.06 295)",
+  "oklch(0.68 0.10 295)",
+  "oklch(0.56 0.14 295)",
+  "oklch(0.45 0.18 295)",
+  "oklch(0.36 0.20 295)",
+  "oklch(0.28 0.18 295)",
+  "oklch(0.20 0.14 295)",
 ];
 
 export function shadeClass(shade: number): string {

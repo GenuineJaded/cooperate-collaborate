@@ -26,6 +26,7 @@ export default function NewArtifactForm({ door, onClose, onCreated }: Props) {
 
   const uploadFile = trpc.artifact.uploadFile.useMutation();
   const createArtifact = trpc.artifact.create.useMutation();
+  const labelWasChanged = artifactLabel.trim() !== "Artifact";
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
@@ -97,7 +98,7 @@ export default function NewArtifactForm({ door, onClose, onCreated }: Props) {
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
-        className="relative w-full max-w-2xl mx-4 animate-fade-in-up"
+        className="relative w-[min(66vw,980px)] max-w-full mx-4 animate-fade-in-up"
         style={{
           background: "oklch(0.07 0.01 280)",
           border: "1px solid oklch(0.28 0.08 295 / 0.55)",
@@ -108,7 +109,7 @@ export default function NewArtifactForm({ door, onClose, onCreated }: Props) {
         {/* Blinking rectangle — "Artifact" label */}
         <div className="mb-5">
           <div
-            className="animate-blink inline-block"
+            className={`${labelWasChanged ? "" : "animate-blink"} inline-block`}
             style={{
               border: "1px solid oklch(0.40 0.12 295 / 0.65)",
               borderRadius: "1px",
@@ -222,10 +223,19 @@ export default function NewArtifactForm({ door, onClose, onCreated }: Props) {
 
         {/* Bottom row: Nāma + attach + place */}
         <div className="flex items-center gap-4 mt-1">
+          <span
+            className="text-[0.68rem] tracking-[0.18em]"
+            style={{
+              color: "oklch(0.52 0.10 295)",
+              whiteSpace: "nowrap",
+            }}
+          >
+            Nāma
+          </span>
           <input
             value={nama}
             onChange={(e) => setNama(e.target.value)}
-            placeholder="Nāma"
+            placeholder=""
             maxLength={128}
             className="flex-1 outline-none text-xs tracking-widest"
             style={{
@@ -238,7 +248,6 @@ export default function NewArtifactForm({ door, onClose, onCreated }: Props) {
             }}
           />
 
-          {/* Attach */}
           <button
             onClick={() => fileInputRef.current?.click()}
             title="attach"
@@ -261,7 +270,6 @@ export default function NewArtifactForm({ door, onClose, onCreated }: Props) {
             onChange={handleFileSelect}
           />
 
-          {/* Submit */}
           <button
             onClick={handleSubmit}
             disabled={submitting || (!body.trim() && !file)}

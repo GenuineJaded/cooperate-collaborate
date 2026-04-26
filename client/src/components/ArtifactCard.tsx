@@ -54,37 +54,41 @@ export default function ArtifactCard({ artifact, sessionId, onQuipped }: Props) 
         style={{
           borderWidth: "1px",
           borderRadius: "2px",
-          padding: "1.75rem",
-          minHeight: "220px",
+          padding: "1.85rem",
+          minHeight: "260px",
+          width: "min(68vw, 980px)",
+          maxWidth: "100%",
           background: "oklch(0.07 0.01 280 / 0.85)",
           backdropFilter: "blur(4px)",
           transition: "border-color 2s ease, box-shadow 2s ease",
         }}
       >
-        {/* Fractal heart — top-right, unlabeled, discovered */}
-        <button
-          onClick={() => setShowIntimate(true)}
-          className="absolute top-2 right-2 animate-pulse-fractal"
-          style={{
-            background: "none",
-            border: "none",
-            padding: "0.2rem",
-            lineHeight: 1,
-          }}
-          aria-label=""
-        >
-          <FractalHeart shade={shade} />
-        </button>
-
-        {/* Nāma — top, quiet */}
-        {artifact.nama && (
+        <div className="mb-5 flex items-start justify-between gap-4">
           <p
-            className="text-xs mb-3 tracking-widest"
-            style={{ color: "oklch(0.42 0.10 295)", letterSpacing: "0.2em" }}
+            className="text-[0.65rem] tracking-[0.24em]"
+            style={{
+              color: "oklch(0.42 0.10 295)",
+              textTransform: "none",
+            }}
           >
-            {artifact.nama}
+            {artifact.nama?.trim() ? artifact.nama : "Artifact"}
           </p>
-        )}
+
+          <button
+            onClick={() => setShowIntimate(true)}
+            className="animate-pulse-fractal"
+            style={{
+              background: "none",
+              border: "none",
+              padding: "0.1rem",
+              lineHeight: 1,
+              marginTop: "-0.15rem",
+            }}
+            aria-label=""
+          >
+            <FractalHeart shade={shade} />
+          </button>
+        </div>
 
         {/* Body — clicking opens quip */}
         {artifact.body && (
@@ -95,8 +99,10 @@ export default function ArtifactCard({ artifact, sessionId, onQuipped }: Props) 
               fontWeight: 300,
               whiteSpace: "pre-wrap",
               cursor: "pointer",
-              fontSize: "0.95rem",
-              lineHeight: 1.75,
+              fontSize: "0.98rem",
+              lineHeight: 1.82,
+              maxHeight: "11.5rem",
+              overflow: "hidden",
             }}
             onClick={() => setShowQuip(true)}
           >
@@ -105,14 +111,13 @@ export default function ArtifactCard({ artifact, sessionId, onQuipped }: Props) 
         )}
 
         {/* File — image/gif rendered inline; other types as a chip */}
-        {artifact.fileUrl && (
+            {artifact.fileUrl && (
           <div className="mb-4">
             <FileAttachment url={artifact.fileUrl} />
           </div>
         )}
 
-        {/* Footer: quip — bottom-right, purple box */}
-        <div className="flex items-center justify-end mt-2">
+        <div className="mt-6 flex items-end justify-end gap-4">
           <button
             onClick={() => setShowQuip(true)}
             className="text-xs tracking-widest transition-all duration-300"

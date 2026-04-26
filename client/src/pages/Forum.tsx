@@ -1,89 +1,44 @@
-import { useState, useEffect } from "react";
-import { useParams } from "wouter";
+import { useEffect, useState } from "react";
+import { useLocation, useParams } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { getSessionId } from "@/lib/shades";
 import ArtifactCard from "@/components/ArtifactCard";
 import NewArtifactForm from "@/components/NewArtifactForm";
-import MultiColorPanel, { FieldColors } from "@/components/MultiColorPanel";
 
 type Door = "writing" | "music" | "art";
-
-const DEFAULT_COLORS: FieldColors = {
-  bgColor: "oklch(0.04 0.01 280)",
-  textColor: "oklch(0.55 0.18 295)",
-  active: false,
+const DOORS: Door[] = ["writing", "art", "music"];
+const DOOR_TONES: Record<Door, string> = {
+  writing: "oklch(0.70 0.08 286)",
+  art: "oklch(0.76 0.12 312)",
+  music: "oklch(0.68 0.09 268)",
 };
 
 export default function Forum() {
+  const [, navigate] = useLocation();
   const params = useParams<{ door?: string }>();
   const door = (params.door as Door) || "writing";
-  const [activeDoor, setActiveDoor] = useState<Door>(door);
   const [showNewForm, setShowNewForm] = useState(false);
   const sessionId = getSessionId();
-  const [fieldColors, setFieldColors] = useState<FieldColors>(DEFAULT_COLORS);
 
   const { data: artifacts, refetch } = trpc.artifact.list.useQuery({
-    type: activeDoor,
+    type: door,
   });
 
-  // Refresh every 90 seconds to reflect decay changes
   useEffect(() => {
     const interval = setInterval(() => refetch(), 90000);
     return () => clearInterval(interval);
   }, [refetch]);
 
-  const doors: Door[] = ["writing", "music", "art"];
-
   return (
     <div
       className="min-h-screen w-full"
       style={{
-        background: fieldColors.active ? fieldColors.bgColor : "oklch(0.04 0.01 280)",
-        color: fieldColors.active ? fieldColors.textColor : undefined,
-        transition: "background 0.6s ease, color 0.6s ease",
+        background: "oklch(0.04 0.01 280)",
+        color: "oklch(0.74 0.04 295)",
       }}
     >
-      {/* Multi-Color-Displays — fixed left panel, sits above everything */}
-      <MultiColorPanel onColorsChange={(c) => setFieldColors(c)} />
-
-      {/* Three doors — full viewport width, truly centered */}
-      <nav
-        className="flex items-center justify-center gap-8 py-8"
-        style={{ borderBottom: "1px solid oklch(0.15 0.04 295 / 0.4)" }}
-      >
-        {doors.map((d) => (
-          <button
-            key={d}
-            onClick={() => setActiveDoor(d)}
-            className="text-sm tracking-widest"
-            style={{
-              background: activeDoor === d ? "oklch(0.10 0.03 295 / 0.4)" : "none",
-              border: activeDoor === d
-                ? "1px solid oklch(0.72 0.22 295 / 0.80)"
-                : "1px solid oklch(0.55 0.18 295 / 0.45)",
-              color:
-                activeDoor === d
-                  ? "oklch(0.75 0.18 295)"
-                  : "oklch(0.45 0.10 295)",
-              fontWeight: activeDoor === d ? 400 : 300,
-              letterSpacing: "0.25em",
-              padding: "0.3rem 1rem",
-              borderRadius: "2px",
-              boxShadow: activeDoor === d ? "0 0 12px oklch(0.55 0.18 295 / 0.20)" : "none",
-              transition: "all 0.25s ease",
-            }}
-          >
-            {d}
-          </button>
-        ))}
-      </nav>
-
-      {/* Field — padded left to clear the fixed panel tab */}
-      <div
-        style={{ paddingLeft: "196px" /* 172px panel + 24px breathing room */ }}
-      >
-        {/* Draft Artifact button — sits above the grid with breathing room */}
-        <div className="px-8 pt-8 pb-4">
+      <div className="mx-auto flex min-h-screen w-full max-w-[1600px] flex-col px-6 pb-12 pt-8 sm:px-8 lg:px-12">
+        <div className="flex items-start justify-between gap-6 pb-8">
           <button
             onClick={() => setShowNewForm(true)}
             className="text-xs tracking-widest"
@@ -91,7 +46,7 @@ export default function Forum() {
               background: "none",
               border: "1px solid oklch(0.55 0.18 295 / 0.55)",
               color: "oklch(0.55 0.18 295)",
-              padding: "0.45rem 1.2rem",
+              padding: "0.55rem 1.15rem",
               borderRadius: "2px",
               letterSpacing: "0.2em",
               boxShadow: "0 0 8px oklch(0.55 0.18 295 / 0.10)",
@@ -107,43 +62,52 @@ export default function Forum() {
               (e.currentTarget as HTMLButtonElement).style.borderColor = "oklch(0.55 0.18 295 / 0.55)";
             }}
           >
-            Draft Artifact
+            Craft an Artifact
           </button>
+
+          <nav className="flex items-center gap-4">
+            {DOORS.map((candidate) => {
+              const active = candidate === door;
+              return (
+                <button
+                  key={candidate}
+                  onClick={() => navigate(`/field/${candidate}`)}
+                  className="text-xs tracking-[0.28em] lowercase"
+                  style={{
+                    background: "none",
+                    border: "none",
+                    color: active ? DOOR_TONES[candidate] : "oklch(0.32 0.06 295)",
+                    padding: 0,
+                    textShadow: active
+                      ? `0 0 18px ${DOOR_TONES[candidate].replace(")", " / 0.18)")}`
+                      : "none",
+                    transition: "color 0.25s ease, text-shadow 0.25s ease",
+                  }}
+                >
+                  {candidate}
+                </button>
+              );
+            })}
+          </nav>
         </div>
 
-        {/* Artifact grid — full width below the button */}
-        <div className="px-8 pb-12">
-          {!artifacts || artifacts.length === 0 ? (
-            <div
-              className="flex items-center justify-center h-64"
-              style={{ color: "oklch(0.28 0.06 295)", fontSize: "0.8rem", letterSpacing: "0.15em" }}
-            >
-              nothing is being held here
-            </div>
-          ) : (
-            <div
-              className="grid gap-6"
-              style={{
-                gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
-              }}
-            >
-              {artifacts.map((artifact) => (
-                <ArtifactCard
-                  key={artifact.id}
-                  artifact={artifact}
-                  sessionId={sessionId}
-                  onQuipped={refetch}
-                />
-              ))}
-            </div>
-          )}
+        <div className="flex-1">
+          <div className="flex flex-col gap-8">
+            {artifacts?.map((artifact) => (
+              <ArtifactCard
+                key={artifact.id}
+                artifact={artifact}
+                sessionId={sessionId}
+                onQuipped={refetch}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* New artifact form modal */}
       {showNewForm && (
         <NewArtifactForm
-          door={activeDoor}
+          door={door}
           onClose={() => setShowNewForm(false)}
           onCreated={() => {
             setShowNewForm(false);

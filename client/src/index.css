@@ -145,7 +145,7 @@
 
 .animate-breathe-bg     { animation: breathe-bg 6s ease-in-out infinite; }
 .animate-breathe-stripe { animation: breathe-stripe 9s ease-in-out infinite; }
-.animate-blink          { animation: blink-rect 2s ease-in-out infinite; }
+.animate-blink          { animation: blink-rect 3.3s ease-in-out infinite; }
 .animate-pulse-fractal  { animation: pulse-fractal 4s ease-in-out infinite; }
 .animate-fade-in-up     { animation: fade-in-up 0.7s ease forwards; }
 

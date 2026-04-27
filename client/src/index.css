@@ -123,9 +123,37 @@
   50%       { opacity: 0.09; transform: scaleY(1.018); }
 }
 
+@keyframes breathe-field {
+  0%, 100% { opacity: 0.72; transform: scale(1); }
+  50%       { opacity: 0.96; transform: scale(1.04); }
+}
+
 @keyframes breathe-stripe {
   0%, 100% { transform: skewX(-18deg) scaleX(1); opacity: 0.055; }
   50%       { transform: skewX(-18deg) scaleX(1.05); opacity: 0.10; }
+}
+
+@keyframes stretch-stripe {
+  0%, 100% {
+    transform: skewX(-19deg) translate3d(0, 0, 0) scaleX(0.94) scaleY(0.98);
+    opacity: 0.2;
+  }
+  35% {
+    transform: skewX(-19deg) translate3d(-0.6%, 0, 0) scaleX(1.02) scaleY(1.03);
+    opacity: 0.34;
+  }
+  65% {
+    transform: skewX(-19deg) translate3d(0.8%, 0, 0) scaleX(1.08) scaleY(1.01);
+    opacity: 0.28;
+  }
+}
+
+@keyframes patha-vibrate {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  20%      { transform: translate3d(0.25px, 0, 0); }
+  40%      { transform: translate3d(-0.35px, 0.1px, 0); }
+  60%      { transform: translate3d(0.3px, -0.15px, 0); }
+  80%      { transform: translate3d(-0.2px, 0, 0); }
 }
 
 @keyframes blink-rect {
@@ -144,10 +172,13 @@
 }
 
 .animate-breathe-bg     { animation: breathe-bg 6s ease-in-out infinite; }
+.animate-breathe-field  { animation: breathe-field 12.5s ease-in-out infinite; }
 .animate-breathe-stripe { animation: breathe-stripe 9s ease-in-out infinite; }
+.animate-stretch-stripe { animation: stretch-stripe 12s ease-in-out infinite; }
 .animate-blink          { animation: blink-rect 3.3s ease-in-out infinite; }
 .animate-pulse-fractal  { animation: pulse-fractal 4s ease-in-out infinite; }
 .animate-fade-in-up     { animation: fade-in-up 0.7s ease forwards; }
+.animate-patha-vibrate  { animation: patha-vibrate 2.8s linear infinite; }
 
 /* ─── Artifact shade borders ─────────────────────────────────────────────── */
 

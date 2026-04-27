@@ -11,24 +11,34 @@ export default function Landing() {
     setTimeout(() => navigate("/field"), 700);
   };
 
-  const stripes = Array.from({ length: 14 }, (_, i) => ({
-    left: `${-10 + i * 8}%`,
-    delay: `${(i * 0.7) % 9}s`,
-    width: `${3 + (i % 3)}%`,
+  const stripes = Array.from({ length: 8 }, (_, i) => ({
+    left: `${-16 + i * 14}%`,
+    delay: `${(i * 1.17) % 11}s`,
+    width: `${3.8 + (i % 3) * 1.1}%`,
+    drift: `${10 + (i % 4) * 2.4}s`,
+    opacity: 0.11 + (i % 3) * 0.03,
   }));
 
   return (
     <div
       ref={containerRef}
       className="relative min-h-screen w-full overflow-hidden flex items-center justify-center"
-      style={{ background: "oklch(0.04 0.01 280)" }}
+      style={{ background: "oklch(0.02 0 0)" }}
     >
+      <div
+        className="absolute inset-0 animate-breathe-field"
+        style={{
+          background:
+            "radial-gradient(ellipse 78% 62% at 50% 48%, oklch(0.09 0.01 280 / 0.58) 0%, oklch(0.03 0 0 / 0.16) 46%, transparent 74%)",
+        }}
+      />
+
       {/* Background breathing layer */}
       <div
         className="absolute inset-0 animate-breathe-bg"
         style={{
           background:
-            "radial-gradient(ellipse 80% 60% at 50% 50%, oklch(0.12 0.06 295 / 0.15) 0%, transparent 70%)",
+            "radial-gradient(ellipse 92% 70% at 50% 50%, oklch(0.14 0.01 280 / 0.12) 0%, oklch(0.06 0 0 / 0.06) 42%, transparent 72%)",
         }}
       />
 
@@ -37,16 +47,19 @@ export default function Landing() {
         {stripes.map((s, i) => (
           <div
             key={i}
-            className="absolute top-[-20%] h-[140%] animate-breathe-stripe"
+            className="absolute top-[-24%] h-[150%] animate-stretch-stripe"
             style={{
               left: s.left,
               width: s.width,
               background:
-                "linear-gradient(to bottom, transparent, oklch(0.88 0.03 295 / 0.07) 30%, oklch(0.88 0.03 295 / 0.07) 70%, transparent)",
-              transform: "skewX(-18deg)",
+                "linear-gradient(to bottom, transparent 0%, oklch(1 0 0 / 0.02) 10%, oklch(1 0 0 / 0.16) 34%, oklch(1 0 0 / 0.25) 50%, oklch(1 0 0 / 0.16) 66%, oklch(1 0 0 / 0.02) 90%, transparent 100%)",
+              transform: "skewX(-19deg)",
               animationDelay: s.delay,
-              animationDuration: `${8 + (i % 4)}s`,
-              borderRadius: "40% 40% 40% 40% / 10% 10% 10% 10%",
+              animationDuration: s.drift,
+              opacity: s.opacity,
+              borderRadius: "999px",
+              filter: "blur(0.6px)",
+              mixBlendMode: "screen",
             }}
           />
         ))}
@@ -111,23 +124,25 @@ export default function Landing() {
         {/* Pātha — the entry */}
         <button
           onClick={handleEnter}
-          className="group"
+          className="group animate-patha-vibrate"
           style={{
             background: "none",
             border: "1px solid oklch(0.55 0.18 295 / 0.55)",
             borderRadius: "2px",
             padding: "0.5rem 1.8rem",
             cursor: "pointer",
-            transition: "border-color 0.4s ease, box-shadow 0.4s ease",
+            transition: "border-color 0.4s ease, box-shadow 0.4s ease, transform 0.3s ease",
             boxShadow: "0 0 12px oklch(0.55 0.18 295 / 0.12)",
           }}
           onMouseEnter={e => {
             (e.currentTarget as HTMLButtonElement).style.borderColor = "oklch(0.72 0.22 295 / 0.85)";
             (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 0 22px oklch(0.55 0.18 295 / 0.35)";
+            (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-1px)";
           }}
           onMouseLeave={e => {
             (e.currentTarget as HTMLButtonElement).style.borderColor = "oklch(0.55 0.18 295 / 0.55)";
             (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 0 12px oklch(0.55 0.18 295 / 0.12)";
+            (e.currentTarget as HTMLButtonElement).style.transform = "translateY(0)";
           }}
         >
           <span

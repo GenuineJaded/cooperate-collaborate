@@ -130,7 +130,7 @@
 
 @keyframes blink-rect {
   0%, 100% { opacity: 1; }
-  50%       { opacity: 0.18; }
+  50%       { opacity: 0.62; }
 }
 
 @keyframes pulse-fractal {

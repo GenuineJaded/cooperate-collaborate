@@ -27,6 +27,25 @@ export async function getDb() {
   return _db;
 }
 
+export async function getDbHealth() {
+  if (!process.env.DATABASE_URL) {
+    return { ok: false, reason: "DATABASE_URL missing" as const };
+  }
+
+  const db = await getDb();
+  if (!db) {
+    return { ok: false, reason: "database client unavailable" as const };
+  }
+
+  try {
+    await db.execute(sql`SELECT 1`);
+    return { ok: true as const };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return { ok: false, reason: message };
+  }
+}
+
 export async function upsertUser(user: InsertUser): Promise<void> {
   if (!user.openId) throw new Error("User openId is required for upsert");
   const db = await getDb();

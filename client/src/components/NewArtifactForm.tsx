@@ -11,11 +11,17 @@ interface Props {
 
 const MAX_FILE_BYTES = 5 * 1024 * 1024; // 5MB
 
+function getErrorMessage(error: unknown): string {
+  if (typeof error === "object" && error && "message" in error && typeof error.message === "string") {
+    return error.message;
+  }
+  return "Something did not hold. Try again.";
+}
+
 export default function NewArtifactForm({ door, onClose, onCreated }: Props) {
   const [nama, setNama] = useState("");
   const [body, setBody] = useState("");
-  const [artifactLabel, setArtifactLabel] = useState("Artifact");
-  const [editingLabel, setEditingLabel] = useState(false);
+  const [artifactLabel, setArtifactLabel] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [showUploadPause, setShowUploadPause] = useState(false);
@@ -26,7 +32,7 @@ export default function NewArtifactForm({ door, onClose, onCreated }: Props) {
 
   const uploadFile = trpc.artifact.uploadFile.useMutation();
   const createArtifact = trpc.artifact.create.useMutation();
-  const labelWasChanged = artifactLabel.trim() !== "Artifact";
+  const labelWasChanged = artifactLabel.trim() !== "";
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
@@ -85,7 +91,7 @@ export default function NewArtifactForm({ door, onClose, onCreated }: Props) {
       onCreated();
     } catch (err) {
       console.error(err);
-      setError("Something did not hold. Try again.");
+      setError(getErrorMessage(err));
     } finally {
       setSubmitting(false);
     }
@@ -101,47 +107,39 @@ export default function NewArtifactForm({ door, onClose, onCreated }: Props) {
         className="relative w-[min(66vw,980px)] max-w-full mx-4 animate-fade-in-up"
         style={{
           background: "oklch(0.07 0.01 280)",
-          border: "1px solid oklch(0.28 0.08 295 / 0.55)",
-          borderRadius: "2px",
+          borderTop: "1px solid oklch(0.48 0.14 295 / 0.7)",
+          borderBottom: "1px solid oklch(0.48 0.14 295 / 0.7)",
           padding: "2rem",
         }}
       >
-        {/* Blinking rectangle — "Artifact" label */}
-        <div className="mb-5">
+        {/* Blinking rectangle — "Artifact" label, centered at top */}
+        <div className="mb-5 flex justify-center">
           <div
             className={`${labelWasChanged ? "" : "animate-blink"} inline-block`}
             style={{
-              border: "1px solid oklch(0.40 0.12 295 / 0.65)",
+              border: "1px solid oklch(0.58 0.16 295 / 0.75)",
               borderRadius: "1px",
               padding: "0.25rem 0.7rem",
               fontSize: "0.65rem",
               letterSpacing: "0.22em",
-              color: "oklch(0.55 0.14 295)",
               cursor: "text",
-              userSelect: "none",
             }}
-            onClick={() => setEditingLabel(true)}
           >
-            {editingLabel ? (
-              <input
-                autoFocus
-                value={artifactLabel}
-                onChange={(e) => setArtifactLabel(e.target.value)}
-                onBlur={() => setEditingLabel(false)}
-                onKeyDown={(e) => e.key === "Enter" && setEditingLabel(false)}
-                style={{
-                  background: "none",
-                  border: "none",
-                  outline: "none",
-                  color: "oklch(0.55 0.14 295)",
-                  fontSize: "0.65rem",
-                  letterSpacing: "0.22em",
-                  width: `${Math.max(8, artifactLabel.length + 1)}ch`,
-                }}
-              />
-            ) : (
-              artifactLabel
-            )}
+            <input
+              value={artifactLabel}
+              onChange={(e) => setArtifactLabel(e.target.value)}
+              placeholder="Artifact"
+              style={{
+                background: "none",
+                border: "none",
+                outline: "none",
+                color: "oklch(0.80 0.14 295)",
+                fontSize: "0.65rem",
+                letterSpacing: "0.22em",
+                width: `${Math.max(8, artifactLabel.length + 1)}ch`,
+                textAlign: "center",
+              }}
+            />
           </div>
         </div>
 

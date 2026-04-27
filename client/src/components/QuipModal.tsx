@@ -17,11 +17,17 @@ interface Props {
 
 const MAX_FILE_BYTES = 5 * 1024 * 1024; // 5MB
 
+function getErrorMessage(error: unknown): string {
+  if (typeof error === "object" && error && "message" in error && typeof error.message === "string") {
+    return error.message;
+  }
+  return "Something did not hold. Try again.";
+}
+
 export default function QuipModal({ artifact, onClose, onQuipped }: Props) {
   const [nama, setNama] = useState("");
   const [body, setBody] = useState("");
-  const [quipLabel, setQuipLabel] = useState("Quip");
-  const [editingLabel, setEditingLabel] = useState(false);
+  const [quipLabel, setQuipLabel] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [showUploadPause, setShowUploadPause] = useState(false);
@@ -33,7 +39,7 @@ export default function QuipModal({ artifact, onClose, onQuipped }: Props) {
 
   const uploadFile = trpc.quip.uploadFile.useMutation();
   const createQuip = trpc.quip.create.useMutation();
-  const labelWasChanged = quipLabel.trim() !== "Quip";
+  const labelWasChanged = quipLabel.trim() !== "";
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
@@ -97,7 +103,7 @@ export default function QuipModal({ artifact, onClose, onQuipped }: Props) {
       onQuipped();
     } catch (err) {
       console.error(err);
-      setError("Something did not hold. Try again.");
+      setError(getErrorMessage(err));
     } finally {
       setSubmitting(false);
     }
@@ -113,47 +119,39 @@ export default function QuipModal({ artifact, onClose, onQuipped }: Props) {
         className="relative w-[min(66vw,980px)] max-w-full mx-4 animate-fade-in-up"
         style={{
           background: "oklch(0.07 0.01 280)",
-          border: "1px solid oklch(0.28 0.08 295 / 0.55)",
-          borderRadius: "2px",
+          borderTop: "1px solid oklch(0.48 0.14 295 / 0.7)",
+          borderBottom: "1px solid oklch(0.48 0.14 295 / 0.7)",
           padding: "2rem",
         }}
       >
-        {/* Blinking rectangle — "Quip" label */}
-        <div className="mb-5">
+        {/* Blinking rectangle — "Quip" label, centered at top */}
+        <div className="mb-5 flex justify-center">
           <div
             className={`${labelWasChanged ? "" : "animate-blink"} inline-block`}
             style={{
-              border: "1px solid oklch(0.40 0.12 295 / 0.65)",
+              border: "1px solid oklch(0.58 0.16 295 / 0.75)",
               borderRadius: "1px",
               padding: "0.25rem 0.7rem",
               fontSize: "0.65rem",
               letterSpacing: "0.22em",
-              color: "oklch(0.55 0.14 295)",
               cursor: "text",
-              userSelect: "none",
             }}
-            onClick={() => setEditingLabel(true)}
           >
-            {editingLabel ? (
-              <input
-                autoFocus
-                value={quipLabel}
-                onChange={(e) => setQuipLabel(e.target.value)}
-                onBlur={() => setEditingLabel(false)}
-                onKeyDown={(e) => e.key === "Enter" && setEditingLabel(false)}
-                style={{
-                  background: "none",
-                  border: "none",
-                  outline: "none",
-                  color: "oklch(0.55 0.14 295)",
-                  fontSize: "0.65rem",
-                  letterSpacing: "0.22em",
-                  width: `${Math.max(6, quipLabel.length + 1)}ch`,
-                }}
-              />
-            ) : (
-              quipLabel
-            )}
+            <input
+              value={quipLabel}
+              onChange={(e) => setQuipLabel(e.target.value)}
+              placeholder="Quip"
+              style={{
+                background: "none",
+                border: "none",
+                outline: "none",
+                color: "oklch(0.80 0.14 295)",
+                fontSize: "0.65rem",
+                letterSpacing: "0.22em",
+                width: `${Math.max(6, quipLabel.length + 1)}ch`,
+                textAlign: "center",
+              }}
+            />
           </div>
         </div>
 

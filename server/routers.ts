@@ -3,6 +3,7 @@ import {
   addIntimateMessage,
   createArtifact,
   createQuip,
+  getDbHealth,
   getArtifactById,
   getIntimateMessages,
   getOrCreateThread,
@@ -17,6 +18,18 @@ import { scheduledRouter } from "./routers/scheduled";
 import { nanoid } from "nanoid";
 
 export const appRouter = router({
+  system: router({
+    health: publicProcedure.query(async () => {
+      const db = await getDbHealth();
+      return {
+        ok: db.ok,
+        db,
+        storage: {
+          configured: Boolean(process.env.BUILT_IN_FORGE_API_URL && process.env.BUILT_IN_FORGE_API_KEY),
+        },
+      };
+    }),
+  }),
 
   artifact: router({
     list: publicProcedure
